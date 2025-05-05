@@ -5,5 +5,7 @@ body {
 }
 
 canvas{
-    background-color: black;
+    display: block;
+    z-index: 1000;
+    background-color: darkblue;
 }
