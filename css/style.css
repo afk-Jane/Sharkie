@@ -2,10 +2,30 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100vh;
+    margin: 0;
+    justify-content: center;
 }
 
 canvas{
     display: block;
-    z-index: 1000;
+    z-index: 100;
     background-color: darkblue;
 }
+
+.overlay {
+    position: absolute;
+    width: 720px;
+    height: 480px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .display-none {
+    display: none;
+  }

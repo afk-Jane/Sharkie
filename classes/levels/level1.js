@@ -1,6 +1,6 @@
-const level1 = new Level(
-    [
-        new Pufferfish(),
+const level1Config = {
+    backgroundTheme: 'night',
+    enemies: [ new Pufferfish(),
         new Jellyfish(),
         new Jellyfish(),
         new Pufferfish(),
@@ -8,7 +8,8 @@ const level1 = new Level(
         new Pufferfish(),
         new Jellyfish(),
         new Jellyfish(),
-        new Boss_Orcinus()
-    ],
+        new Boss_Orcinus()],
+        level_end_x: 720 * 10
+};
 
-);
+const level1 = new Level(level1Config);

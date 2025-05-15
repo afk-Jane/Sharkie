@@ -64,11 +64,10 @@ class Boss_Orcinus extends MovableObject {
         this.loadImages(this.ORCINUS_IMAGES_ATTACKING);
         this.loadImages(this.ORCINUS_IMAGES_HURT_POISONED);
         this.loadImages(this.ORCINUS_IMAGES_DEAD_POISONED);
-        this.x = 256 + Math.random() * 500;
-        this.height = 568;
-        this.width = 911;
-        this.x = 14000;
-        this.y = 350;
+        this.height = 256;
+        this.width = 512;
+        this.x = 1000;
+        this.y = 100;
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';

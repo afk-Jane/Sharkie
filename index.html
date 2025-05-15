@@ -13,6 +13,7 @@
     <script src="./classes/sunbeam.class.js"></script>
     <script src="./classes/background-object.class.js"></script>
     <script src="./classes/barrier.class.js"></script>
+    <script src="./classes/layermanager.class.js"></script>
     <script src="./classes/world.classes.js"></script>
     <script src="./classes/keyboard.class.js"></script>
     <script src="./js/animation.js"></script>
@@ -21,10 +22,73 @@
     <script src="./js/game.js"></script>
     <title>Sharkie</title>
 </head>
-<body onload="init()">
-    <h1>Sharkie</h1>
-    <canvas width="720" height="480" id="canvas">
+<body>
+    
+    <div id="start-screen" class="overlay">
+        <h1>Sharkie</h1>
+        <button onclick="startGame(level1)">Start</button>
+        <button onclick="openLevelSelect()">Select Level</button>
+        <button onclick="showControls()">Controls</button>
+        <button onclick="showCredits()">Credits</button>
+    </div>
 
-    </canvas>
+    <div id="level-select-screen" class="overlay display-none">
+        <h2>Select Level</h2>
+        <button onclick="startGame(level1)">Level 1</button>
+        <button onclick="startGame(level2)">Level 2</button>
+        <button onclick="backToStart()">Back</button>
+    </div>
+
+    <div id="controls-screen" class="overlay display-none">
+        <h2>Controls</h2>
+        <div id="moving-controls" class="controls">
+            <div id="wasd">
+                <div id="top-row">
+                    <button id="W">W</button>
+                </div>
+                <div id="bottom-row">
+                    <button id="A">A</button>
+                    <button id="S">S</button>
+                    <button id="D">D</button>
+                </div>
+            </div>
+            <div id="moving-controls-description" class="description">
+                <p>
+                    W, A, S, D or ▲, ◄, ▼, ► to move Top, Left, Down or Right
+                </p>
+            </div>
+            <div id="arrow-buttons" class="controls">
+                <div id="top-row">
+                    <button id="Up">▲</button>
+                </div>
+                <div id="bottom-row">
+                    <button id="Left">◄</button>
+                    <button id="Down">▼</button>
+                    <button id="Right">►</button>
+                </div>
+            </div>
+        </div>
+        <button onclick="backToStart()">Back</button>
+    </div>
+
+    <div id="credits-screen" class="overlay display-none">
+        <h2>Credits</h2>
+        <p>grfics, sound ... </p>
+        <button onclick="backToStart()">Back</button>
+      </div>
+      
+    <div id="win-screen" class="overlay display-none">
+        <h2>Win!</h2>
+        <button onclick="backToStart()">Back to Start</button>
+    </div>
+      
+    <div id="lose-screen" class="overlay display-none">
+        <h2>Lose!</h2>
+        <button onclick="backToStart()">Try again</button>
+    </div>
+
+
+    <canvas width="720" height="480" id="canvas"></canvas>
+
 </body>
 </html>

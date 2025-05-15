@@ -8,29 +8,6 @@ class MovableObject extends DrawableObject {
     imageCache = {};
     
 
-    loadImage(path) {
-        this.img = new Image();
-        this.img.src = path;
-        this.img.onload = () => {
-            this.imageLoaded = true;
-        };
-    }
-
-    /** 
-     * 
-     * @param {Array} arr - ['img/image1.png', 'img/image2.png', ...]
-     */
-    loadImages(arr){
-        arr.forEach((path, index) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-            if (index === 0) {
-                this.img = img;
-            }
-        });
-    }
-
     moveRight() {
         this.x += this.speed;
     }
@@ -54,5 +31,13 @@ class MovableObject extends DrawableObject {
             this.currentImage = (this.currentImage + 1) % images.length;
             this.img = this.imageCache[images[this.currentImage]];
         }
+    }
+
+    playAnimation() {
+        let index = this.currentImage % images.length;
+        let path = images[index];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+        console.log('playAnimation genutzt \(^.^)/')
     }
 }

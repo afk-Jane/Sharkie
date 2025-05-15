@@ -2,10 +2,69 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-function init(){
+/**
+ * @param {Level} level 
+ */
+function startGame(level) {
+    hideAllOverlays();
+    showCanvas();
+    init(level);
+}
+
+/**
+ * @param {Level} level 
+ */
+function init(level) {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
+    console.log(level);
+    world = new World(canvas, level, keyboard);
     loadCharacterAnimation(world.character);
+}
+
+function hideAllOverlays() {
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('display-none'));
+}
+
+/**
+ * @param {string} id 
+ */
+function showOverlay(id) {
+    hideAllOverlays();
+    document.getElementById(id).classList.remove('display-none');
+}
+
+function showCanvas() {
+    document.getElementById('canvas').style.display = 'block';
+}
+
+function openLevelSelect() {
+    showOverlay('level-select-screen');
+}
+
+function showControls() {
+    showOverlay('controls-screen');
+}
+
+function showCredits() {
+    showOverlay('credits-screen');
+}
+
+function backToStart() {
+    showOverlay('start-screen');
+    document.getElementById('canvas').style.display = 'none';
+}
+
+window.onload = () => {
+    showOverlay('start-screen');
+};
+
+function gameOver(win) {
+    if (win) {
+        showOverlay('win-screen');
+    } else {
+        showOverlay('lose-screen');
+    }
+    document.getElementById('canvas').style.display = 'none';
 }
 
 window.addEventListener("keydown", (e) => {

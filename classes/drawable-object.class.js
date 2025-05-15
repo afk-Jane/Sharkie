@@ -11,9 +11,16 @@ class DrawableObject {
     loadImage(path) {
         this.img = new Image();
         this.img.src = path;
+        this.img.onload = () => {
+            this.imageLoaded = true;
+        };
     }
 
-    loadImages(arr) {
+    /** 
+     * 
+     * @param {Array} arr - ['img/image1.png', 'img/image2.png', ...]
+     */
+    loadImages(arr){
         arr.forEach((path, index) => {
             let img = new Image();
             img.src = path;
@@ -22,13 +29,6 @@ class DrawableObject {
                 this.img = img;
             }
         });
-    }
-    
-    playAnimation() {
-        let index = this.currentImage % images.length;
-        let path = images[index];
-        this.img = this.imageCache[path];
-        this.currentImage++;
     }
 
     draw(ctx) {
