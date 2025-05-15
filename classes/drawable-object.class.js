@@ -11,16 +11,24 @@ class DrawableObject {
     loadImage(path) {
         this.img = new Image();
         this.img.src = path;
-        this.img.onload = () => {
-            this.imageLoaded = true;
-        };
+    }
+
+    loadImages(arr) {
+        arr.forEach((path, index) => {
+            let img = new Image();
+            img.src = path;
+            this.imageCache[path] = img;
+            if (index === 0) {
+                this.img = img;
+            }
+        });
     }
     
     playAnimation() {
-        setInterval(() => {
-            this.currentImage = (this.currentImage + 1) % this.imageCache.length;
-            this.img = this.imageCache[this.currentImage];
-        }, 100); 
+        let index = this.currentImage % images.length;
+        let path = images[index];
+        this.img = this.imageCache[path];
+        this.currentImage++;
     }
 
     draw(ctx) {

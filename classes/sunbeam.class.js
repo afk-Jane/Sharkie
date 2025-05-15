@@ -1,12 +1,28 @@
 class Sunbeam extends MovableObject {
-    x = 0;
-    height = 420;
-    width = 700;
-
-    constructor() {
+    constructor(config) {
         super();
-        this.loadImage('./img/3. Background/Layers/1. Light/1.png');
+        this.loadImage(config.image || './img/3Background/Layers/1Light/1.png');
+        this.x = config.x;
+        this.y = config.y;
+        this.width = config.width;
+        this.height = config.height;
+        this.opacity = config.opacity;
+        this.speed = config.speed;
     }
 
-    //"Sharkie\img\3. Background\Layers\1. Light\2.png"
+    move() {
+        this.x -= this.speed;
+        if (this.x + this.width < 0) {
+            this.x = this.x + this.resetOffset;
+        }
+    }
+
+    draw(ctx) {
+        if (!this.isImageLoaded()) return;
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        ctx.globalAlpha = 1.0;
+        ctx.restore();
+    }
 }
