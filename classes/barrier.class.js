@@ -1,3 +1,4 @@
+
 class Barrier extends MovableObject {
     IMAGES_BARRIER = [
         './img/3Background/Barrier/1.png',

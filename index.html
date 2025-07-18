@@ -68,25 +68,59 @@
                 </div>
             </div>
         </div>
+        <div id="fin-attack-controls" class="controls">
+            <div id="wasd-b">
+                <div id="b-button">
+                    <button id="b">B</button>
+                </div>
+            </div>
+            <div id="fin-attack-controls-description" class="description">
+                <p>
+                    press B or F to use fin-slap
+                </p>
+            </div>
+            <div id="arrows-f">
+                <div id="f-button">
+                    <button id="f">F</button>
+                </div>
+            </div>
+        </div>
+        <div id="bubble-attack-controls" class="controls">
+            <div id="wasd-b-SPACE">
+                <div id="space">
+                    <button id="space">SPACE</button>
+                </div>
+            </div>
+            <div id="bubble-attack-controls-description" class="description">
+                <p>
+                    press SPACE or E to use fin-slap
+                </p>
+            </div>
+            <div id="arrows-f-e">
+                <div id="e-button">
+                    <button id="e">E</button>
+                </div>
+            </div>
+        </div>
         <button onclick="backToStart()">Back</button>
     </div>
-
     <div id="credits-screen" class="overlay display-none">
         <h2>Credits</h2>
-        <p>grfics, sound ... </p>
+        <p>grafics, sound ... </p>
         <button onclick="backToStart()">Back</button>
       </div>
-      
     <div id="win-screen" class="overlay display-none">
         <h2>Win!</h2>
         <button onclick="backToStart()">Back to Start</button>
     </div>
-      
     <div id="lose-screen" class="overlay display-none">
         <h2>Lose!</h2>
         <button onclick="backToStart()">Try again</button>
     </div>
-
+    <div id="complete-screen" class="overlay display-none">
+        <h2>Level complete!</h2>
+        <button onclick="backToStart()">Try again</button>
+    </div>
 
     <canvas width="720" height="480" id="canvas"></canvas>
 
