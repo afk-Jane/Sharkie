@@ -17,8 +17,8 @@ function startGame(level) {
 function init(level) {
     canvas = document.getElementById('canvas');
     console.log(level);
-    world = new World(canvas, level, keyboard);
-    loadCharacterAnimation(world.character);
+    this.world = new World(canvas, level, keyboard);
+    loadCharacterAnimation(this.world.character);
 }
 
 function hideAllOverlays() {
@@ -106,6 +106,7 @@ window.addEventListener("keydown", (e) => {
             keyboard.F = true;
             break;
     }
+    this.world.checkCollisions();
 });
 
 window.addEventListener("keyup", (e) => {

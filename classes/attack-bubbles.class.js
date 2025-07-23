@@ -10,8 +10,8 @@ class Bubble extends MovableObject {
         this.toLeft = toLeft;
 
         let bubbleImg = poisoned
-            ? './img/1Sharkie/4Attack/Bubble-trap/Bubble.png'
-            : './img/1Sharkie/4Attack/Bubble-trap/Poisoned-Bubble.png';
+            ? './img/1Sharkie/4Attack/Bubble-trap/Poisoned-Bubble.png'
+            : './img/1Sharkie/4Attack/Bubble-trap/Bubble.png';
 
         this.loadImage(bubbleImg);
     }

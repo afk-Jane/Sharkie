@@ -101,7 +101,8 @@ class Character extends MovableObject {
     this.height = 256;
     this.width = 256;
     this.y = 256;
-    this.speed = 10;    
+    this.speed = 10;
+    this.type = 'player';
   }
 
   moveLeft() {
@@ -115,6 +116,7 @@ class Character extends MovableObject {
   }
 
   playAnimation() {
+    if (this.isAttacking) return;
     let images;
     switch (this.currentState) {
       case 'SWIMMING':
@@ -137,6 +139,7 @@ class Character extends MovableObject {
     }
     this.playSwimAnimation(images);
   }
+
 
   updateCharacter() {
     if (this.world.keyboard.RIGHT || this.world.keyboard.D) {
@@ -181,8 +184,15 @@ class Character extends MovableObject {
     if (this.y < -100) {
       this.y = -100;
     }
-    if (this.y + this.height > 500) {
-      this.y = 500 - this.height;
+    if (this.y + this.height > 530) {
+      this.y = 530 - this.height;
+    }
+  }
+
+  onCollision(other) {
+    super.onCollision(other); // Basiskollisionslogik übernehmen
+    if (this.energy < 0) {
+        this.currentState = 'DEAD'; 
     }
   }
 
@@ -237,19 +247,25 @@ class Character extends MovableObject {
     // Hier Hitbox der Gegner prüfen
   }
 
-  playAttackAnimation(images) {
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < images.length) {
-        this.img = this.imageCache[images[i]];
-        i++;
+playAttackAnimation(images, onComplete = () => {}) {
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < images.length) {
+      const frame = this.imageCache[images[i]];
+      if (frame) {
+        this.img = frame;
       } else {
-        clearInterval(interval);
-        this.loadImages(this.IMAGES_SWIMMING);
+        console.warn("Missing image:", images[i]);
       }
-    }, 50);
-  }
-
+      i++;
+    } else {
+      clearInterval(interval);
+      this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
+      this.isAttacking = false;
+      onComplete();
+    }
+  }, 50);
+}
   updateAttack() {
     if (this.isAttacking) return;
 

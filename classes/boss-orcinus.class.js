@@ -71,6 +71,7 @@ class Boss_Orcinus extends MovableObject {
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
+        this.type = 'enemy';
         setInterval(() => {
             this.playAnimation();
         }, 1000 / 15);

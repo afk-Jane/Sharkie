@@ -44,6 +44,7 @@ class Jellyfish extends MovableObject {
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
+        this.type = 'enemy';
         this.startAnimation();
     }
 

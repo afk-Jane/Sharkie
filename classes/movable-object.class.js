@@ -24,6 +24,22 @@ class MovableObject extends DrawableObject {
         return this.img && this.img.complete && this.img.naturalWidth !== 0;
     }
 
+    isCollidingWith(other) {
+        return (
+            this.x < other.x + other.width &&
+            this.x + this.width > other.x &&
+            this.y < other.y + other.height &&
+            this.y + this.height > other.y
+        );
+    }
+
+    onCollision(other) {
+        this.energy -= 10;
+
+        console.log(`Collision! ${this.constructor.name} and ${other.constructor.name}`);
+        console.log(`Energie: this=${this.energy}, other=${other.energy}`);
+    }
+
     playSwimAnimation(images) {
         let now = new Date().getTime();
         if (now - this.lastFrameTime > this.frameInterval) {
@@ -40,4 +56,20 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
         console.log('playAnimation genutzt \(^.^)/')
     }
+
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
+    }
+
+    drawFrame(ctx) {
+        if (this instanceof Character || this instanceof Jellyfish || this instanceof Pufferfish) {
+            ctx.beginPath();
+            ctx.lineWidth = '5';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
+    }
+
+
 }

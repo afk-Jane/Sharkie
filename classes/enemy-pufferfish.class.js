@@ -39,14 +39,23 @@ class Pufferfish extends MovableObject {
         this.loadImages(this.IMAGES_PUFFERFISH_ATTACKING);
         this.loadImages(this.IMAGES_PUFFERFISH_DEAD);
         this.x = 256 + Math.random() * 500;
+        this.y = 32 + Math.random() * 288;
         this.height = 48;
         this.width = 64;
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
+        this.type = 'enemy';
         setInterval(() => {
             this.playAnimation();
         }, 1000 / 15);
+    }
+
+    onCollision(other) {
+        super.onCollision(other); // Basiskollisionslogik übernehmen
+        if (this.energy < 0) {
+           this.currentState = 'DEAD'; 
+        }
     }
 
     playAnimation() {
