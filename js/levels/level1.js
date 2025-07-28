@@ -9,7 +9,7 @@ const level1Config = {
         new Jellyfish(),
         new Jellyfish(),
         new Boss_Orcinus()],
-        level_end_x: 720 * 10
+        level_end_x: 1280 * 10
 };
 
 const level1 = new Level(level1Config);

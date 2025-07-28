@@ -69,6 +69,16 @@ class Character extends MovableObject {
     "./img/1Sharkie/4Attack/Bubble-trap/poisoned-bubbles/8.png",
   ];
 
+  IMAGES_ATTACK_BUBBLES_WITHOUT_BUBBLES = [
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/1.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/2.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/3.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/4.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/5.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/6.png",
+    "./img/1Sharkie/4Attack/Bubble-trap/bubble/Without-Bubbles/7.png"
+  ];
+
   IMAGES_ATTACK_FIN = [
     "./img/1Sharkie/4Attack/Fin-slap/1.png",
     "./img/1Sharkie/4Attack/Fin-slap/2.png",
@@ -98,8 +108,8 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK_BUBBLES);
     this.loadImages(this.IMAGES_ATTACK_BUBBLES_POISONED); 
     this.loadImages(this.IMAGES_ATTACK_FIN); 
-    this.height = 256;
-    this.width = 256;
+    this.height = 128;
+    this.width = 192;
     this.y = 256;
     this.speed = 10;
     this.type = 'player';
@@ -175,22 +185,22 @@ class Character extends MovableObject {
   }
 
   stayInBounds() {
-    if (this.x < 0) {
-      this.x = 0;
+    if (this.x < 2) {
+      this.x = 2;
     }
     if (this.x + this.width > this.world.level_end_x) {
       this.x = this.world.level_end_x - this.width;
     }
-    if (this.y < -100) {
-      this.y = -100;
+    if (this.y < -4) {
+      this.y = -4;
     }
-    if (this.y + this.height > 530) {
-      this.y = 530 - this.height;
+    if (this.y + this.height > 690) {
+      this.y = 690 - this.height;
     }
   }
 
   onCollision(other) {
-    super.onCollision(other); // Basiskollisionslogik übernehmen
+    super.onCollision(other);
     if (this.energy < 0) {
         this.currentState = 'DEAD'; 
     }
@@ -203,7 +213,9 @@ class Character extends MovableObject {
       this.otherDirection,
       poisoned
     );
-    this.world.bubbles.push(bubble);
+    if (this.world && this.world.bubbles) {
+      this.world.bubbles.push(bubble);
+    }
   }
 
   attackBubbles() {

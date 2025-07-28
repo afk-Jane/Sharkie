@@ -1,31 +1,306 @@
+@font-face {
+  font-family: 'LuckiestGuy';
+  src: url('./font/LuckiestGuy-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    justify-content: center;
+  display: flex;
+  height: 100vh;
+  margin: 0;
+  font-family: 'LuckiestGuy', sans-serif;
+  letter-spacing: 3px
+}
+
+.display-none {
+  display: none !important;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#game-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #181818;
+  overflow: hidden;
+}
+
+#game-container {
+  position: relative;
+  max-width: 1280px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
 }
 
 canvas{
-    display: block;
-    z-index: 100;
-    background-color: darkblue;
+  display: block;
+  z-index: 100;
+  background-color: darkblue;
+  width: 100%;
+  height: 100%;
 }
 
 .overlay {
-    position: absolute;
-    width: 720px;
-    height: 480px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: absolute;
+  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 2vw;
+  box-sizing: border-box;
+}
+
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+#start-screen {
+  background-image: url(/img/homescreen-background.png);
+  background-size: cover;
+}
+
+.img-wrapper img {
+  width: auto;
+  z-index: 10;
+  position: relative;
+  left: 36rem;
+  bottom: 32rem;
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+h1 {
+  font-size: 10rem;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  background-image: linear-gradient(to left, #6b30a4, #00c1ff);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: 2px 4px 6px rgba(0, 0, 50, 0.5);
+  animation: wave 2s ease-in-out infinite;
+}
+
+button {
+  font-family: 'LuckiestGuy', sans-serif;
+  cursor: pointer;
+  border: 2px solid whitesmoke;
+  border-radius: 8px;
+  background-color: #531a82;
+  color: whitesmoke;
+  font-size: 2.5rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  padding: 0 1.5rem;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+#start-screen {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.menu-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 9rem;
+    
+  @media (max-width: 1150px) {
+    gap: 0.75rem;
   }
+}
+
+.menu-btn-wrapper button {
+  display: inline-block;
+  cursor: pointer;
+  border: none;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  padding: 0.8rem 2rem;
+  min-width: 12rem;
+  font-size: 2rem;
+  background-color: #531a82;
+  color: whitesmoke;
+  box-shadow: 0 0 0.5vw rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  font-family: 'LuckiestGuy', sans-serif;
+  letter-spacing: 4px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-shadow: 0 0 0.5vw rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  text-shadow: 2px 4px 6px rgba(0, 0, 50, 0.5);
   
-  .display-none {
-    display: none;
+  @media (max-width: 1150px) {
+    font-size: 1.5rem;
+    padding: 1rem 1.7rem;
   }
+
+  @media (max-width: 960px) {
+
+  }
+}
+
+.menu-btn-wrapper button:hover {
+  background-color: #6b30a4;
+  transform: scale(1.05);
+}
+
+#controls-screen .bg-image,
+#credits-screen .bg-image,
+#level-select-screen .bg-image {
+  position: absolute;
+  inset: 0;
+  background-image: url("/img/homescreen-dark-background.png");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.7);
+  z-index: -100;
+}
+
+#controls-screen,
+#credits-screen,
+#level-select-screen {
+  max-width: 1280px;
+  aspect-ratio: 16 / 9;
+
+}
+
+h2 {
+  font-size: 3.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.controls-explained-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.control-btn {
+  border-radius: 8px;
+  border: 0.4vw solid whitesmoke;
+  width: 3rem;
+  height: 3rem;
+  background-color: #7fffe0;
+  color: #531a82;
+  font-size: 2.5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease;
+  font-family: 'LuckiestGuy', sans-serif;
+  font-weight: bold;
+}
+
+#space {
+  width: fit-content;
+  padding: 0 1.5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.control-btn:hover {
+  background-color: #7ffff1;
+  color: #8329ce;
+  transform: scale(1.05);
+}
+
+#controls-screen .controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+#controls-screen .controls > * {
+  flex: 0 0 33.33%;
+}
+
+#arrow-buttons,
+#wasd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+#top-row,
+#bottom-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.control-btn {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.description {
+  flex: 1;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.btn-wrapper button {
+  cursor: pointer;
+  font-size: 2rem;
+  width: fit-content;
+  padding: 0 1rem;
+  border: 2px solid whitesmoke;
+  transition: transform 0.15s ease;
+  font-family: 'LuckiestGuy', sans-serif;
+  background-color: #531a82;
+  color: whitesmoke;
+  width: 8rem;
+  height: 3rem;
+  margin-top: 2rem;
+}
+
+.level-btn-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.level-btn-screen button {
+
+}

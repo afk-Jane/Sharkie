@@ -62,7 +62,7 @@ class MovableObject extends DrawableObject {
     }
 
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Jellyfish || this instanceof Pufferfish) {
+        if (this instanceof Character || this instanceof Jellyfish || this instanceof Pufferfish || this instanceof Boss_Orcinus) {
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = 'blue';

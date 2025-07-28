@@ -17,7 +17,7 @@ function startGame(level) {
 function init(level) {
     canvas = document.getElementById('canvas');
     console.log(level);
-    this.world = new World(canvas, level, keyboard);
+    world = new World(canvas, level, keyboard);
     loadCharacterAnimation(this.world.character);
 }
 
@@ -50,8 +50,8 @@ function showCredits() {
 }
 
 function backToStart() {
-    showOverlay('start-screen');
-    document.getElementById('canvas').style.display = 'none';
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('display-none'));
+    document.getElementById('start-screen').classList.remove('display-none');
 }
 
 window.onload = () => {

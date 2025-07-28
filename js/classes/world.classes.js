@@ -21,7 +21,7 @@ class World {
         this.enemies = level.enemies || [];
         this.coins = level.coins || [];
         this.bottles = level.bottles || [];
-        this.level_end_x = level.level_end_x || 720 * 10;
+        this.level_end_x = level.level_end_x || 1280 * 10;
         this.character = new Character();
         this.character.world = this;
         this.collisions = [this.character, ...this.enemies] || [];
@@ -29,6 +29,8 @@ class World {
             backgroundTheme: level.backgroundTheme || 'day',
             levelEndX: this.level_end_x
         });
+        this.collisionManager = new CollisionManager();
+        this.bubble = [];
         this.setWorld();
         this.draw();
         //this.initEnemyBehavior();
@@ -55,12 +57,13 @@ class World {
         this.addToMap(this.character);
         this.addObjectToMap(this.bubbles);
         this.ctx.restore();
+        this.collisionManager.checkCollisions();
         requestAnimationFrame(() => this.draw());
     }
 
     updateBubbles() {
         this.bubbles.forEach(b => b.move());
-        this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.canvas.width);
+        this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.level_end_x);
     }
 
     addObjectToMap(objects){
@@ -88,47 +91,8 @@ class World {
             this.ctx.drawImage(movObj.img, movObj.x, movObj.y, movObj.width, movObj.height);
             movObj.drawFrame(this.ctx);
         }
- //why does this crashing the game O.o
     }
 
-    checkCollisions() {
-        for (let i = 0; i < this.collisions.length; i++) {
-            for (let j = i + 1; j < this.collisions.length; j++) {
-                const char1 = this.collisions[i];
-                const char2 = this.collisions[j];
-                console.log(`checking: ${char1.type} vs ${char2.type}`);
-                if (char1.type === 'enemy' && char2.type === 'enemy') continue;
-                if (char1.isCollidingWith(char2) && char1.type === 'player') {
-                    char1.onCollision(char2);
-                }
-        }
-        }
-    }
-
-    /*
-    thinkythinky
-        if (character.x + character.width > chicken.x &&
-            character.y + character.height > chicken.y &&
-            character.x < chicken &&
-            character.y < chicken.y + chicken.heihgt
-            )
-        
-        isColliding(movObj) {
-            return this.x + this.width > movObj.x &&
-            this.y + this.height > movObj.y &&
-            this.x < movObj.x &&
-            this.y < movObj.y + movObj.height
-        }    
-
-        checkCollisions() {
-            setInterval() => {
-                consol}
-        }
-
-    */
-
-
-    
     flipImage(movObj) {
         this.ctx.save();
         this.ctx.translate(movObj.x + movObj.width, movObj.y); 

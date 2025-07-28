@@ -4,126 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="./classes/drawable-object.class.js"></script>
-    <script src="./classes/movable-object.class.js"></script>
-    <script src="./classes/attack-bubbles.class.js"></script>
-    <script src="./classes/character.class.js"></script>
-    <script src="./classes/enemy-pufferfish.class.js"></script>
-    <script src="./classes/enemy-jellyfish.class.js"></script>
-    <script src="./classes/boss-orcinus.class.js"></script>
-    <script src="./classes/sunbeam.class.js"></script>
-    <script src="./classes/background-object.class.js"></script>
-    <script src="./classes/barrier.class.js"></script>
-    <script src="./classes/layermanager.class.js"></script>
-    <script src="./classes/world.classes.js"></script>
-    <script src="./classes/keyboard.class.js"></script>
+    <script src="./js/classes/drawable-object.class.js"></script>
+    <script src="./js/classes/movable-object.class.js"></script>
+    <script src="./js/classes/attack-bubbles.class.js"></script>
+    <script src="./js/classes/character.class.js"></script>
+    <script src="./js/classes/enemy-pufferfish.class.js"></script>
+    <script src="./js/classes/enemy-jellyfish.class.js"></script>
+    <script src="./js/classes/boss-orcinus.class.js"></script>
+    <script src="./js/classes/sunbeam.class.js"></script>
+    <script src="./js/classes/background-object.class.js"></script>
+    <script src="./js/classes/barrier.class.js"></script>
+    <script src="./js/classes/layermanager.class.js"></script>
+    <script src="./js/classes/keyboard.class.js"></script>
     <script src="./js/animation.js"></script>
-    <script src="./classes/levels/level.class.js"></script>
-    <script src="./classes/levels/level1.js"></script>
+    <script src="./js/levels/level.class.js"></script>
+    <script src="./js/levels/level1.js"></script>
+    <script src="js/classes/collision-manager.class.js"></script>
+    <script src="js/classes/world.classes.js"></script>
     <script src="./js/game.js"></script>
     <title>Sharkie</title>
 </head>
 <body>
     
-    <div id="start-screen" class="overlay">
-        <h1>Sharkie</h1>
-        <button onclick="startGame(level1)">Start</button>
-        <button onclick="openLevelSelect()">Select Level</button>
-        <button onclick="showControls()">Controls</button>
-        <button onclick="showCredits()">Credits</button>
-    </div>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <canvas width="1280" height="720" id="canvas"></canvas>
 
-    <div id="level-select-screen" class="overlay display-none">
-        <h2>Select Level</h2>
-        <button onclick="startGame(level1)">Level 1</button>
-        <button onclick="startGame(level2)">Level 2</button>
-        <button onclick="backToStart()">Back</button>
-    </div>
-
-    <div id="controls-screen" class="overlay display-none">
-        <h2>Controls</h2>
-        <div id="moving-controls" class="controls">
-            <div id="wasd">
-                <div id="top-row">
-                    <button id="W">W</button>
-                </div>
-                <div id="bottom-row">
-                    <button id="A">A</button>
-                    <button id="S">S</button>
-                    <button id="D">D</button>
-                </div>
+            <div id="start-screen" class="overlay">
+                <div class="content-wrapper">
+                        <h1>Sharkie</h1>
+                        <div class="menu-btn-wrapper">
+                            <button onclick="startGame(level1)">Start</button>
+                            <button onclick="openLevelSelect()">Select Level</button>
+                            <button onclick="showControls()">Controls</button>
+                            <button onclick="showCredits()">Credits</button>
+                        </div>    
+                    <div class="img-wrapper">
+                        <img src="/img/sharkie-right.png" alt="Sharkie">
+                    </div>
+                </div>       
             </div>
-            <div id="moving-controls-description" class="description">
-                <p>
-                    W, A, S, D or ▲, ◄, ▼, ► to move Top, Left, Down or Right
-                </p>
+            <div id="controls-screen" class="overlay display-none">
+                <div class="bg-image"></div>
+                <div class="overlay-content">
+                    <h2>Controls</h2>
+                    <div class="controls-explained-wrapper">
+                        <div id="moving-controls" class="controls">
+                            <div id="wasd">
+                                <div id="top-row">
+                                    <div class="control-btn" id="W">W</div>
+                                </div>
+                                <div id="bottom-row">
+                                    <div class="control-btn" id="A">A</div>
+                                    <div class="control-btn" id="S">S</div>
+                                    <div class="control-btn" id="D">D</div>
+                                </div>
+                            </div>
+                            <div id="moving-controls-description" class="description">
+                                <p>
+                                    W, A, S, D or ▲, ◄, ▼, ► to move Top, Left, Down or Right
+                                </p>
+                            </div>
+                            <div id="arrow-buttons">
+                                <div id="top-row">
+                                    <div class="control-btn" id="Up">▲</div>
+                                </div>
+                                <div id="bottom-row">
+                                    <div class="control-btn" id="Left">◄</div>
+                                    <div class="control-btn" id="Down">▼</div>
+                                    <div class="control-btn" id="Right">►</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fin-attack-controls" class="controls">
+                            <div id="wasd-b">
+                                <div id="b-button">
+                                    <div class="control-btn" id="b">B</div>
+                                </div>
+                            </div>
+                            <div id="fin-attack-controls-description" class="description">
+                                <p>
+                                    press B or F to use fin-slap
+                                </p>
+                            </div>
+                            <div id="arrows-f">
+                                <div id="f-button">
+                                    <div class="control-btn" id="f">F</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bubble-attack-controls" class="controls">
+                            <div id="wasd-b-SPACE">
+                                <div id="space">
+                                    <div class="control-btn" id="space">SPACE</div>
+                                </div>
+                            </div>
+                            <div id="bubble-attack-controls-description" class="description">
+                                <p>
+                                    press SPACE or E to use fin-slap
+                                </p>
+                            </div>
+                            <div id="arrows-f-e">
+                                <div id="e-button">
+                                    <div class="control-btn" id="e">E</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">
+                            <button onclick="backToStart()">Back</button>
+                        </div>
+                    </div>
+                </div>    
             </div>
-            <div id="arrow-buttons" class="controls">
-                <div id="top-row">
-                    <button id="Up">▲</button>
-                </div>
-                <div id="bottom-row">
-                    <button id="Left">◄</button>
-                    <button id="Down">▼</button>
-                    <button id="Right">►</button>
-                </div>
+            <div id="level-select-screen" class="overlay display-none">
+                <div class="bg-image"></div>
+                <div class="overlay-content">
+                    <h2>Select Level</h2>
+                    <div class="level-btn-screen">  
+                        <button onclick="startGame(level1)">Level 1</button>
+                        <button onclick="startGame(level2)">Level 2</button>
+                        <button onclick="startGame(level3)">Level 3</button>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button onclick="backToStart()">Back</button>
+                    </div>
+                </div>    
+            </div>
+            <div id="credits-screen" class="overlay display-none">
+                <div class="bg-image"></div>
+                <div class="overlay-content">
+                    <h2>Credits</h2>
+                    <div class="text-wrapper">
+                        <p>grafics, sound ... </p>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur numquam atque praesentium fugiat excepturi totam consequuntur corporis labore ut natus iste, rerum quae sequi? Necessitatibus eos quos delectus dolorum officia?</p>
+                    </div>
+                    <button onclick="backToStart()">Back</button>
+                </div>    
+            </div>
+            <div id="win-screen" class="overlay display-none">
+                <h2>Win!</h2>
+                <button onclick="backToStart()">Back to Start</button>
+            </div>
+            <div id="lose-screen" class="overlay display-none">
+                <h2>Lose!</h2>
+                <button onclick="backToStart()">Try again</button>
+            </div>
+            <div id="pause-screen" class="overlay display-none">
+                <h2>Pause</h2>
+                <button onclick="backToStart()">Try again</button>
             </div>
         </div>
-        <div id="fin-attack-controls" class="controls">
-            <div id="wasd-b">
-                <div id="b-button">
-                    <button id="b">B</button>
-                </div>
-            </div>
-            <div id="fin-attack-controls-description" class="description">
-                <p>
-                    press B or F to use fin-slap
-                </p>
-            </div>
-            <div id="arrows-f">
-                <div id="f-button">
-                    <button id="f">F</button>
-                </div>
-            </div>
-        </div>
-        <div id="bubble-attack-controls" class="controls">
-            <div id="wasd-b-SPACE">
-                <div id="space">
-                    <button id="space">SPACE</button>
-                </div>
-            </div>
-            <div id="bubble-attack-controls-description" class="description">
-                <p>
-                    press SPACE or E to use fin-slap
-                </p>
-            </div>
-            <div id="arrows-f-e">
-                <div id="e-button">
-                    <button id="e">E</button>
-                </div>
-            </div>
-        </div>
-        <button onclick="backToStart()">Back</button>
-    </div>
-    <div id="credits-screen" class="overlay display-none">
-        <h2>Credits</h2>
-        <p>grafics, sound ... </p>
-        <button onclick="backToStart()">Back</button>
-      </div>
-    <div id="win-screen" class="overlay display-none">
-        <h2>Win!</h2>
-        <button onclick="backToStart()">Back to Start</button>
-    </div>
-    <div id="lose-screen" class="overlay display-none">
-        <h2>Lose!</h2>
-        <button onclick="backToStart()">Try again</button>
-    </div>
-    <div id="complete-screen" class="overlay display-none">
-        <h2>Level complete!</h2>
-        <button onclick="backToStart()">Try again</button>
     </div>
 
-    <canvas width="720" height="480" id="canvas"></canvas>
 
 </body>
 </html>

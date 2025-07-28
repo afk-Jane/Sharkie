@@ -1,7 +1,7 @@
 class Sunbeam extends MovableObject {
     constructor(config) {
         super();
-        this.loadImage(config.image || './img/3Background/Layers/1Light/1.png');
+        this.loadImage(config.image || './img/3Background/Legacy/Layers/1Light/1.png');
         this.x = config.x;
         this.y = config.y;
         this.width = config.width;
