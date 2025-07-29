@@ -14,10 +14,17 @@ class Jellyfish extends MovableObject {
     ];
 
     IMAGES_JELLYFISH_DEAD_PINK = [
-        'img/2Enemy/2Jellyfish/Super-dangerous/Pink1.png',
-        'img/2Enemy/2Jellyfish/Super-dangerous/Pink2.png',
-        'img/2Enemy/2Jellyfish/Super-dangerous/Pink3.png',
-        'img/2Enemy/2Jellyfish/Super-dangerous/Pink4.png'
+        'img/2Enemy/2Jellyfish/Dead/Pink/P1.png',
+        'img/2Enemy/2Jellyfish/Dead/Pink/P2.png',
+        'img/2Enemy/2Jellyfish/Dead/Pink/P3.png',
+        'img/2Enemy/2Jellyfish/Dead/Pink/P4.png'
+    ];
+
+    IMAGES_JELLYFISH_DEAD_PINK_WITHOUT_BUBBLE = [
+        'img/2Enemy/2Jellyfish/Dead/Pink/without-bubble/P1-without-bubble.png',
+        'img/2Enemy/2Jellyfish/Dead/Pink/without-bubble/P2-without-bubble.png',
+        'img/2Enemy/2Jellyfish/Dead/Pink/without-bubble/P3-without-bubble.png',
+        'img/2Enemy/2JellyfishDead/Pink/without-bubble/P4-without-bubble.png'
     ];
 
     IMAGES_JELLYFISH_DEAD_PURPLE = [
@@ -27,11 +34,18 @@ class Jellyfish extends MovableObject {
         'img/2Enemy/2Jellyfish/Dead/Lila/L4.png'
     ];
 
+    IMAGES_JELLYFISH_DEAD_PURPLE_WITHOUT_BUBBLE = [
+        'img/2Enemy/2Jellyfish/Dead/Lila/withou-bubble/L1-without-bubble.png',
+        'img/2Enemy/2Jellyfish/Dead/Lila/withou-bubble/L2-without-bubble.png',
+        'img/2Enemy/2Jellyfish/Dead/Lila/withou-bubble/L3-without-bubble.png',
+        'img/2Enemy/2Jellyfish/Dead/Lila/withou-bubble/L4-without-bubble.png'
+    ];
+
     currentImage = 0;
 
-    
     constructor() {
         super();
+        this.deadAnimationFinished = false;
         this.loadImage('./img/2Enemy/2Jellyfish/Super-dangerous/Pink1.png');
         this.loadImages(this.IMAGES_JELLYFISH_NORMAL_SWIM_PURPLE);
         this.loadImages(this.IMAGES_JELLYFISH_DANGEROUS_SWIM_PINK);
@@ -52,17 +66,32 @@ class Jellyfish extends MovableObject {
         setInterval(() => this.playAnimation(), 1000 / 15);
     }
 
+    playDeathAnimation(images) {
+        if (this.currentImage < images.length) {
+            this.img = this.imageCache[images[this.currentImage]];
+            this.currentImage++;
+        } else {
+            this.deadAnimationFinished = true;
+        }
+    }
+
     playAnimation() {
         let images;
+         if (this.currentState === 'DEAD') {
+            images = this.dangerColor === 'pink'
+                ? this.IMAGES_JELLYFISH_DEAD_PINK
+                : this.IMAGES_JELLYFISH_DEAD_PURPLE;
 
-        if (this.currentState === 'DEAD') {
-            images = this.dangerColor === 'pink' ? this.IMAGES_JELLYFISH_DEAD_PINK : this.IMAGES_JELLYFISH_DEAD_PURPLE;
-        } else if (this.currentState === 'DANGEROUS') {
+            if (!this.deadAnimationFinished) {
+                this.playDeathAnimation(images);
+            }
+            return;
+        }
+        if (this.currentState === 'DANGEROUS') {
             images = this.IMAGES_JELLYFISH_DANGEROUS_SWIM_PINK;
         } else {
             images = this.IMAGES_JELLYFISH_NORMAL_SWIM_PURPLE;
         }
-
         this.playSwimAnimation(images);
     }
 
@@ -77,6 +106,8 @@ class Jellyfish extends MovableObject {
 
     die() {
         this.currentState = 'DEAD';
+        this.currentImage = 0;
+        this.deadAnimationFinished = false;
     }
 
     initEnemyBehavior() {
@@ -92,5 +123,19 @@ class Jellyfish extends MovableObject {
                 }
             });
         }, 200); 
+    }
+
+    onCollision(source) {
+        if (source.type === 'player' || source.type === 'melee' || source.type === 'projectile') {
+            this.takeDamage();
+        }
+    }
+
+    takeDamage() {
+        this.energy -= 20;
+        if (this.energy <= 0) {
+            this.markForRemoval = true;
+
+        }
     }
 }

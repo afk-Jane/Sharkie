@@ -30,6 +30,8 @@ class World {
             levelEndX: this.level_end_x
         });
         this.collisionManager = new CollisionManager();
+        this.collisionManager.register(this.character);
+        this.enemies.forEach(enemy => this.collisionManager.register(enemy));
         this.bubble = [];
         this.setWorld();
         this.draw();
@@ -49,6 +51,9 @@ class World {
         this.ctx.save();
         this.ctx.translate(-this.camera_x, 0);
         this.character.updateCharacter();
+        if (this.keyboard.FIN && !this.finCooldown) {
+            this.createFinAttackHitbox();
+        }
         this.updateBubbles();
         this.layerManager.render(this.ctx);
         this.addObjectToMap(this.coins);
@@ -64,6 +69,32 @@ class World {
     updateBubbles() {
         this.bubbles.forEach(b => b.move());
         this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.level_end_x);
+    }
+
+    createFinAttackHitbox() {
+        const direction = this.character.otherDirection ? -1 : 1;
+        const hitbox = {
+            x: this.character.x + direction * this.character.width * 0.8,
+            y: this.character.y + this.character.height / 2 - 20,
+            width: 40,
+            height: 40,
+            type: 'melee',
+            onCollision: (enemy) => {
+                if (typeof enemy.takeDamage === 'function') {
+                    enemy.takeDamage();
+                }
+            }
+        };
+        hitbox.draw = (ctx) => {
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        };
+        this.collisionManager.register(hitbox);
+        setTimeout(() => {
+            this.collisionManager.unregister(hitbox);
+        }, 100);
+        this.finCooldown = true;
+        setTimeout(() => this.finCooldown = false, 400);
     }
 
     addObjectToMap(objects){

@@ -30,6 +30,7 @@ class Pufferfish extends MovableObject {
     ];
 
     currentImage = 0;
+    deadAnimationFinished = false;
 
     constructor() {
         super();
@@ -51,10 +52,18 @@ class Pufferfish extends MovableObject {
         }, 1000 / 15);
     }
 
-    onCollision(other) {
-        super.onCollision(other); // Basiskollisionslogik übernehmen
-        if (this.energy < 0) {
-           this.currentState = 'DEAD'; 
+    onCollision(source) {
+        if (source.type === 'player' || source.type === 'melee' || source.type === 'projectile') {
+            this.takeDamage();
+        }
+    }
+
+   takeDamage() {
+        this.energy -= 20;
+        if (this.energy <= 0 && this.currentState !== 'DEAD') {
+            this.currentState = 'DEAD';
+            this.currentImage = 0;
+            this.deadAnimationFinished = false;
         }
     }
 
@@ -63,19 +72,34 @@ class Pufferfish extends MovableObject {
         switch (this.currentState) {
             case 'SWIMMING':
                 images = this.IMAGES_PUFFERFISH_SWIM;
+                this.playSwimAnimation(images);
                 break;
             case 'TRANSITION':
                 images = this.IMAGES_PUFFERFISH_TRANSITION;
+                this.playSwimAnimation(images);
                 break;
             case 'ATTACKING':
                 images = this.IMAGES_PUFFERFISH_ATTACKING;
+                this.playSwimAnimation(images);
                 break;
             case 'DEAD':
                 images = this.IMAGES_PUFFERFISH_DEAD;
+                if (!this.deadAnimationFinished) {
+                    this.playDeathAnimation(images);
+                }
                 break;
             default:
                 images = this.IMAGES_PUFFERFISH_SWIM;
+                this.playSwimAnimation(images);
         }
-        this.playSwimAnimation(images);
+    }
+
+    playDeathAnimation(images) {
+        if (this.currentImage < images.length) {
+            this.img = this.imageCache[images[this.currentImage]];
+            this.currentImage++;
+        } else {
+            this.deadAnimationFinished = true;
+        }
     }
 }

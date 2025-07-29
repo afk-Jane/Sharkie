@@ -90,6 +90,14 @@ class Character extends MovableObject {
     "./img/1Sharkie/4Attack/Fin-slap/8.png",
   ];
 
+  IMAGES_HURT = [
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/.o1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/.o2.png"
+  ];
+
   currentImage = 0;
   bubbleCooldown = false;
   isAttacking = false;
@@ -199,11 +207,12 @@ class Character extends MovableObject {
     }
   }
 
-  onCollision(other) {
-    super.onCollision(other);
-    if (this.energy < 0) {
-        this.currentState = 'DEAD'; 
-    }
+  onCollision(enemyOrProjectile) {
+    if (this.isInvincible) return;
+    this.energy -= 10;
+    this.playHurtAnimation();
+    this.isInvincible = true;
+    setTimeout(() => this.isInvincible = false, 1000);
   }
 
   spawnBubble(poisoned) {

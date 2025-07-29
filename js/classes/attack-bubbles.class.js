@@ -28,4 +28,11 @@ class Bubble extends MovableObject {
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.stroke();
     }
+
+    onCollision(enemy) {
+        this.markForRemoval = true;
+        if (typeof enemy.takeDamage === 'function') {
+            enemy.takeDamage();
+        }
+    }
 }

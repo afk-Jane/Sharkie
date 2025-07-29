@@ -58,16 +58,39 @@ class CollisionManager {
      */
     checkCollisions() {
         const projectiles = this.objects.filter(obj => obj.type === 'projectile');
+        const enemyProjectiles = this.objects.filter(obj => obj.type === 'enemyProjectile');
         const enemies = this.objects.filter(obj => obj.type === 'enemy');
+        const players = this.objects.filter(obj => obj.type === 'player');
+        const melees = this.objects.filter(obj => obj.type === 'melee');
+        for (const player of players) {
+            for (const enemy of enemies) {
+                if (CollisionManager.isColliding(player, enemy)) {
+                    player.onCollision?.(enemy);
+                    enemy.onCollision?.(player);
+                }
+            }
+        }
+        for (const player of players) {
+            for (const enemyProjectile of enemyProjectiles) {
+                if (CollisionManager.isColliding(player, enemyProjectile)) {
+                    player.onCollision?.(enemyProjectile);
+                    enemyProjectile.onCollision?.(player);
+                }
+            }
+        }
         for (const projectile of projectiles) {
             for (const enemy of enemies) {
                 if (CollisionManager.isColliding(projectile, enemy)) {
-                    if (typeof projectile.onCollision === 'function') {
-                        projectile.onCollision(enemy);
-                    }
-                    if (typeof enemy.onCollision === 'function') {
-                        enemy.onCollision(projectile);
-                    }
+                    projectile.onCollision?.(enemy);
+                    enemy.onCollision?.(projectile);
+                }
+            }
+        }
+        for (const melee of melees) {
+            for (const enemy of enemies) {
+                if (CollisionManager.isColliding(melee, enemy)) {
+                    melee.onCollision?.(enemy);
+                    enemy.onCollision?.(melee);
                 }
             }
         }
