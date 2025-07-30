@@ -94,8 +94,13 @@ class Character extends MovableObject {
     "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
     "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
     "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
-    "./img/1Sharkie/5Hurt/2Electric-shock/.o1.png",
-    "./img/1Sharkie/5Hurt/2Electric-shock/.o2.png"
+    "./img/1Sharkie/5Hurt/2Electric-shock/o1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/o2.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/o1.png",
+    "./img/1Sharkie/5Hurt/2Electric-shock/o2.png"
   ];
 
   currentImage = 0;
@@ -116,6 +121,7 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK_BUBBLES);
     this.loadImages(this.IMAGES_ATTACK_BUBBLES_POISONED); 
     this.loadImages(this.IMAGES_ATTACK_FIN); 
+    this.loadImages(this.IMAGES_HURT);
     this.height = 128;
     this.width = 192;
     this.y = 256;
@@ -136,31 +142,47 @@ class Character extends MovableObject {
   playAnimation() {
     if (this.isAttacking) return;
     let images;
-    switch (this.currentState) {
-      case 'SWIMMING':
-        images = this.IMAGES_SWIMMING;
-        break;
-      case 'WAITING':
-        images = this.IMAGES_WAITING;
-        break;
-      case 'ATTACK_BUBBLES':
-        images = this.IMAGES_ATTACK_BUBBLES;
-        break;
-      case 'ATTACK_BUBBLES_POISONED':
-        images = this.IMAGES_ATTACK_BUBBLES_POISONED;
-        break;
-      case 'ATTACK_FIN':
-        images = this.IMAGES_ATTACK_FIN;
-        break;
-      default:
-        images = this.IMAGES_WAITING;
+    if (this.isHurt) {
+      images = this.IMAGES_HURT;
+    } else {
+      switch (this.currentState) {
+        case 'SWIMMING':
+          images = this.IMAGES_SWIMMING;
+          break;
+        case 'WAITING':
+          images = this.IMAGES_WAITING;
+          break;
+        case 'ATTACK_BUBBLES':
+          images = this.IMAGES_ATTACK_BUBBLES;
+          break;
+        case 'ATTACK_BUBBLES_POISONED':
+          images = this.IMAGES_ATTACK_BUBBLES_POISONED;
+          break;
+        case 'ATTACK_FIN':
+          images = this.IMAGES_ATTACK_FIN;
+          break;
+        default:
+          images = this.IMAGES_WAITING;
+      }
     }
     this.playSwimAnimation(images);
   }
 
-
   updateCharacter() {
-    if (this.world.keyboard.RIGHT || this.world.keyboard.D) {
+    if (this.isHurt) {
+      this.currentState = 'HURT';
+    } else if (this.world.keyboard.E) {
+      if (this.poisonActive) {
+        this.attackPoisonedBubbles();
+        this.currentState = 'ATTACK_BUBBLES_POISONED';
+      } else {
+        this.attackBubbles();
+        this.currentState = 'ATTACK_BUBBLES';
+      }
+    } else if (this.world.keyboard.F) {
+      this.attackFin();
+      this.currentState = 'ATTACK_FIN';
+    } else if (this.world.keyboard.RIGHT || this.world.keyboard.D) {
       this.moveRight();
       this.currentState = 'SWIMMING';
     } else if (this.world.keyboard.LEFT || this.world.keyboard.A) {
@@ -174,19 +196,6 @@ class Character extends MovableObject {
       this.currentState = 'SWIMMING';
     } else {
       this.currentState = 'WAITING';
-    }
-    if (this.world.keyboard.E) {
-      if (this.poisonActive) {
-        this.attackPoisonedBubbles();
-        this.currentState = 'ATTACK_BUBBLES_POISONED';
-      } else {
-        this.attackBubbles();
-        this.currentState = 'ATTACK_BUBBLES';
-      }
-    }
-    if (this.world.keyboard.F) {
-      this.attackFin();
-      this.currentState = 'ATTACK_FIN';
     }
     this.playAnimation();
     this.stayInBounds();
@@ -210,9 +219,11 @@ class Character extends MovableObject {
   onCollision(enemyOrProjectile) {
     if (this.isInvincible) return;
     this.energy -= 10;
-    this.playHurtAnimation();
     this.isInvincible = true;
-    setTimeout(() => this.isInvincible = false, 1000);
+    this.isHurt = true;
+    this.playHurtAnimation();
+    setTimeout(() => this.isHurt = false, 300);
+    setTimeout(() => this.isInvincible = false, 2000);
   }
 
   spawnBubble(poisoned) {
@@ -268,28 +279,28 @@ class Character extends MovableObject {
     // Hier Hitbox der Gegner prüfen
   }
 
-playAttackAnimation(images, onComplete = () => {}) {
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < images.length) {
-      const frame = this.imageCache[images[i]];
-      if (frame) {
-        this.img = frame;
+  playAttackAnimation(images, onComplete = () => {}) {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < images.length) {
+        const frame = this.imageCache[images[i]];
+        if (frame) {
+          this.img = frame;
+        } else {
+          console.warn("Missing image:", images[i]);
+        }
+        i++;
       } else {
-        console.warn("Missing image:", images[i]);
+        clearInterval(interval);
+        this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
+        this.isAttacking = false;
+        onComplete();
       }
-      i++;
-    } else {
-      clearInterval(interval);
-      this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
-      this.isAttacking = false;
-      onComplete();
-    }
-  }, 50);
-}
+    }, 50);
+  }
+
   updateAttack() {
     if (this.isAttacking) return;
-
     if (this.world.keyboard.BUBBLE) {
       if (this.poisonActive) {
         this.attackPoisonedBubbles();
@@ -297,13 +308,41 @@ playAttackAnimation(images, onComplete = () => {}) {
         this.attackBubbles();
       }
     }
-
     if (this.world.keyboard.FIN) {
       this.attackFin();
     }
-
     if (this.world.keyboard.POISON) {
       this.tryActivatePoison();
     }
   }
+
+  playHurtAnimation() {
+    if (this.currentImage < this.IMAGES_HURT.length) {
+        this.img = this.imageCache[this.IMAGES_HURT[this.currentImage]];
+        this.currentImage++;
+    } else {
+        this.hurt = false;
+        this.currentImage = 0;
+    }
+  }
+
+  draw(ctx) {
+    if (!this.isImageLoaded()) return;
+    ctx.save();
+    if (this.otherDirection) {
+        ctx.translate(this.x + this.width, this.y);
+        ctx.scale(-1, 1);
+    } else {
+        ctx.translate(this.x, this.y);
+    }
+    if (this.currentState === 'HURT') {
+        ctx.drawImage(this.img, -this.width * 0.1, -this.height * 0.1, this.width * 1.2, this.height * 1.2);
+    } else {
+        ctx.drawImage(this.img, 0, 0, this.width, this.height);
+    }
+    ctx.restore();
+  }
+
+
+
 }

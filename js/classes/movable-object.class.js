@@ -20,10 +20,6 @@ class MovableObject extends DrawableObject {
         this.speedY = 30;
     }
 
-    isImageLoaded() {
-        return this.img && this.img.complete && this.img.naturalWidth !== 0;
-    }
-
     isCollidingWith(other) {
         return (
             this.x < other.x + other.width &&

@@ -7,6 +7,9 @@ class World {
     character;
     enemies = [];
     collisions = [];
+    healthbar = new Healthbar();
+    //coinbar = new Coinbar();
+    //posionbar = new Poisionbar();
     coins = [];
     bottles = [];
     bubbles = [];
@@ -44,26 +47,54 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        let center = this.canvas.width / 2;
-        if (this.character.x > center) {
-            this.camera_x = this.character.x - center;
-        }
+        this.updateCamera();
         this.ctx.save();
         this.ctx.translate(-this.camera_x, 0);
+        this.updateCharacterLogic();
+        this.drawWorld();
+        this.ctx.restore();
+        this.drawUI();
+        this.collisionManager.checkCollisions();
+        requestAnimationFrame(() => this.draw());
+    }
+
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    updateCamera() {
+        const center = this.canvas.width / 2;
+        if (this.character.x > center) {
+            this.camera_x = this.character.x - center;
+        } else {
+            this.camera_x = 0;
+        }
+    }
+
+    updateCharacterLogic() {
         this.character.updateCharacter();
         if (this.keyboard.FIN && !this.finCooldown) {
             this.createFinAttackHitbox();
         }
         this.updateBubbles();
+    }
+
+    drawWorld() {
         this.layerManager.render(this.ctx);
         this.addObjectToMap(this.coins);
         this.addObjectToMap(this.bottles);
         this.addObjectToMap(this.enemies);
-        this.addToMap(this.character);
         this.addObjectToMap(this.bubbles);
-        this.ctx.restore();
-        this.collisionManager.checkCollisions();
-        requestAnimationFrame(() => this.draw());
+    }
+
+    drawCharacter() {
+        this.character.draw(this.ctx);
+    }
+
+    drawUI() {
+        this.addObjectToMap(this.healthbar);
+        //this.addObjectToMap(this.poisionbar);
+        //this.addObjectToMap(this.coinbar);
     }
 
     updateBubbles() {
@@ -99,13 +130,16 @@ class World {
 
     addObjectToMap(objects){
         if (!objects) return;
+        if (!Array.isArray(objects)) {
+            objects = [objects];
+        }
         objects.forEach(obj => {
             this.addToMap(obj);
         });
     }
 
     addToMap(movObj) {
-        if (!movObj.isImageLoaded()) {
+        if (!movObj || typeof movObj.isImageLoaded === 'function' && !movObj.isImageLoaded()) {
             return;
         }
         if (movObj instanceof Sunbeam) {
@@ -120,6 +154,8 @@ class World {
             this.ctx.restore();
         } else {
             this.ctx.drawImage(movObj.img, movObj.x, movObj.y, movObj.width, movObj.height);
+        }
+        if (movObj instanceof MovableObject && typeof movObj.drawFrame === 'function') {
             movObj.drawFrame(this.ctx);
         }
     }
