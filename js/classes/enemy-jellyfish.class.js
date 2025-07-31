@@ -53,6 +53,7 @@ class Jellyfish extends MovableObject {
         this.loadImages(this.IMAGES_JELLYFISH_DEAD_PURPLE);
         this.x = 256 + Math.random() * 384;
         this.y = 32 + Math.random() * 288;
+        this.energy = 20;
         this.height = 128;
         this.width = 64;
         this.frameInterval = 100;

@@ -64,6 +64,7 @@ class Boss_Orcinus extends MovableObject {
         this.loadImages(this.ORCINUS_IMAGES_ATTACKING);
         this.loadImages(this.ORCINUS_IMAGES_HURT_POISONED);
         this.loadImages(this.ORCINUS_IMAGES_DEAD_POISONED);
+        this.energy = 100;
         this.height = 256;
         this.width = 320;
         this.x = 1500;

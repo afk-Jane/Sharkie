@@ -102,6 +102,7 @@ class Pufferfish extends MovableObject {
         this.loadImages(this.DEAD_IMAGES_ALL_SKINS[this.skinIndex]);
         this.x = 256 + Math.random() * 500;
         this.y = 32 + Math.random() * 288;
+        this.energy = 40;
         this.height = 48;
         this.width = 64;
         this.frameInterval = 100;
@@ -117,12 +118,12 @@ class Pufferfish extends MovableObject {
         if (this.currentState === 'DEAD') return;
         const isPlayer = source.type === 'player';
         const isAttack = source.type === 'projectile' || source.type === 'melee';
-        if ((isPlayer || isAttack) && this.currentState === 'SWIMMING') {
+        if (isPlayer && this.currentState === 'SWIMMING') {
             this.currentState = 'TRANSITION';
             this.currentImage = 0;
             return;
         }
-        if ((isPlayer || isAttack) && this.currentState === 'ATTACKING') {
+        if (isAttack && (this.currentState === 'SWIMMING' || this.currentState === 'ATTACKING')) {
             this.takeDamage();
         }
     }

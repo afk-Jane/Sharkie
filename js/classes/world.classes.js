@@ -9,7 +9,7 @@ class World {
     collisions = [];
     healthbar = new Healthbar();
     //coinbar = new Coinbar();
-    //posionbar = new Poisionbar();
+    poisonbar = new Poisonbar(); //this.poisonbar.setPoison(this.poisonbar.currentPoison + 1);
     coins = [];
     bottles = [];
     bubbles = [];
@@ -84,6 +84,7 @@ class World {
         this.addObjectToMap(this.coins);
         this.addObjectToMap(this.bottles);
         this.addObjectToMap(this.enemies);
+        this.drawCharacter()
         this.addObjectToMap(this.bubbles);
     }
 
@@ -93,7 +94,7 @@ class World {
 
     drawUI() {
         this.addObjectToMap(this.healthbar);
-        //this.addObjectToMap(this.poisionbar);
+        this.addObjectToMap(this.poisonbar);
         //this.addObjectToMap(this.coinbar);
     }
 
