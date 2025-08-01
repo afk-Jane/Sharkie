@@ -62,6 +62,7 @@ class CollisionManager {
         const enemies = this.objects.filter(obj => obj.type === 'enemy');
         const players = this.objects.filter(obj => obj.type === 'player');
         const melees = this.objects.filter(obj => obj.type === 'melee');
+        const collectables = this.objects.filter(obj => obj.type === 'collectable');
         for (const player of players) {
             for (const enemy of enemies) {
                 if (CollisionManager.isColliding(player, enemy)) {
@@ -91,6 +92,13 @@ class CollisionManager {
                 if (CollisionManager.isColliding(melee, enemy)) {
                     melee.onCollision?.(enemy);
                     enemy.onCollision?.(melee);
+                }
+            }
+        }
+        for (const player of players) {
+            for (const collectable of collectables) {
+                if (CollisionManager.isColliding(player, collectable) && !collectable.collected) {
+                    collectable.onCollision?.(player);
                 }
             }
         }

@@ -50,6 +50,10 @@ class World {
         this.updateCamera();
         this.ctx.save();
         this.ctx.translate(-this.camera_x, 0);
+        if (!this.paused) {
+            this.updateCharacterLogic();
+            this.collisionManager.checkCollisions();
+        }
         this.updateCharacterLogic();
         this.drawWorld();
         this.ctx.restore();

@@ -157,16 +157,23 @@
                     <button onclick="backToStart()">Back</button>
                 </div>    
             </div>
+            <div id="pause-screen" class="overlay display-none">
+                <div class="content-wrapper">
+                    <h2>Pause</h2>
+                    <div class="">
+                        <button onclick="resumeGame()">Continue Game</button>
+                        <button onclick="showControls()">Controls</button>
+                        <button onclick="restartLevel()">Restart Level</button>
+                        <button onclick="backToStart()">Back to Homescreen</button>
+                    </div>
+                </div>
+            </div>
             <div id="win-screen" class="overlay display-none">
                 <h2>Win!</h2>
                 <button onclick="backToStart()">Back to Start</button>
             </div>
             <div id="lose-screen" class="overlay display-none">
                 <h2>Lose!</h2>
-                <button onclick="backToStart()">Try again</button>
-            </div>
-            <div id="pause-screen" class="overlay display-none">
-                <h2>Pause</h2>
                 <button onclick="backToStart()">Try again</button>
             </div>
         </div>

@@ -125,7 +125,7 @@ class Character extends MovableObject {
     this.height = 128;
     this.width = 192;
     this.y = 256;
-    this.speed = 10;
+    this.speed = 5;
     this.type = 'player';
   }
 

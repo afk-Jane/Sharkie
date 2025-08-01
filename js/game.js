@@ -54,6 +54,25 @@ function backToStart() {
     document.getElementById('start-screen').classList.remove('display-none');
 }
 
+function togglePause() {
+    if (!world) return;
+    if (world.paused) {
+        resumeGame();
+    } else {
+        pauseGame();
+    }
+}
+
+function pauseGame() {
+    world.paused = true;
+    showOverlay('pause-screen');
+}
+
+function resumeGame() {
+    world.paused = false;
+    hideAllOverlays();
+}
+
 window.onload = () => {
     showOverlay('start-screen');
 };
@@ -105,6 +124,13 @@ window.addEventListener("keydown", (e) => {
         case "f":
             keyboard.F = true;
             break;
+        case "escape":
+        case "p":
+            if (!pauseToggled) {
+                togglePause();
+                pauseToggled = true;
+            }
+            break;
     }
 });
 
@@ -145,6 +171,10 @@ window.addEventListener("keyup", (e) => {
             break;
         case "f":
             keyboard.F = false;
+            break;
+        case "escape":
+        case "p":
+            pauseToggled = false;
             break;
     }
 });
