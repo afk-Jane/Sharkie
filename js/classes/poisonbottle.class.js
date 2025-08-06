@@ -56,4 +56,12 @@ class PoisonBottle extends CollectableObject {
         else if (theme === 'night' && this.direction === 'right') this.groundImg.src = this.IMAGE_NIGHT_RIGHT;
         else this.groundImg.src = this.IMAGE_NIGHT_LEFT;
     }
+
+    onCollision(player) {
+        if (this.collected) return;
+        this.collected = true;
+        if (player.world && player.world.poisonbar) {
+            player.world.poisonbar.setPoison(player.world.poisonbar.currentPoison + 1);
+        }
+    }
 }

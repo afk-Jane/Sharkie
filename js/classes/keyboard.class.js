@@ -5,7 +5,8 @@ class Keyboard {
     DOWN = false;
     SPACE = false;
     B = false;
-    ESC = false;
+    P = false;
+    V = false;
 
     W = false;
     A = false;
@@ -13,17 +14,19 @@ class Keyboard {
     D = false;
     E = false;
     F = false;
-    p = false;
+    ESC = false;
+    Q = false;
+    
 
     get BUBBLE() {
-        return this.SPACE || this.E;
+        return this.B || this.E;
     }
 
     get FIN() {
-        return this.B || this.F;
+        return this.SPACE || this.F;
     }
 
     get POISON() {
-        return this.Q || this.V;
+        return this.V || this.Q;
     }
 }

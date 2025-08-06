@@ -175,4 +175,12 @@ class Pufferfish extends MovableObject {
             this.deadAnimationFinished = true;
         }
     }
+
+    initEnemyBehavior() {
+        this.enemies.forEach(enemy => {
+            if (typeof enemy.setTarget === 'function') {
+                enemy.setTarget(this.character);
+            }
+        });
+    }
 }

@@ -7,6 +7,8 @@ class Coin extends CollectableObject {
         './img/4Marcadores/collectables/Coins/4.png',
     ];
 
+    showCounter = false;
+
     constructor(x, y) {
         super(x, y, 48, 48);
         this.type = 'collectable';
@@ -29,5 +31,13 @@ class Coin extends CollectableObject {
     draw(ctx) {
         this.playAnimation();
         super.draw(ctx);
+    }
+
+    onCollision(player) {
+        if (this.collected) return;
+        this.collected = true;
+        if (player.world && player.world.coinbar) {
+            player.world.coinbar.setCoins(player.world.coinbar.coins + 1);
+        }
     }
 }

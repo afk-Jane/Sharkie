@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let menuStack = [];
 
 /**
  * @param {Level} level 
@@ -29,8 +30,21 @@ function hideAllOverlays() {
  * @param {string} id 
  */
 function showOverlay(id) {
+        const current = document.querySelector('.overlay:not(.display-none)');
+    if (current && current.id !== id) {
+        menuStack.push(current.id);
+    }
     hideAllOverlays();
     document.getElementById(id).classList.remove('display-none');
+}
+
+function backToPreviousMenu() {
+    if (menuStack.length > 0) {
+        const previous = menuStack.pop();
+        showOverlay(previous);
+    } else {
+        backToStart();
+    }
 }
 
 function showCanvas() {
@@ -47,6 +61,10 @@ function showControls() {
 
 function showCredits() {
     showOverlay('credits-screen');
+}
+
+function showSetting() {
+    showOverlay('settings-screen');
 }
 
 function backToStart() {
@@ -76,6 +94,12 @@ function resumeGame() {
 window.onload = () => {
     showOverlay('start-screen');
 };
+
+function showCoinCounter() {
+    if (world && world.coinbar) {
+        world.coinbar.showCounter = !world.coinbar.showCounter;
+    }
+}
 
 function gameOver(win) {
     if (win) {

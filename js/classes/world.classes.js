@@ -8,7 +8,7 @@ class World {
     enemies = [];
     collisions = [];
     healthbar = new Healthbar();
-    //coinbar = new Coinbar();
+    coinbar = new Coinbar();
     poisonbar = new Poisonbar(); //this.poisonbar.setPoison(this.poisonbar.currentPoison + 1);
     coins = [];
     bottles = [];
@@ -48,8 +48,8 @@ class World {
         this.barriers.forEach(barrier => this.collisionManager.register(barrier));
         this.bubble = [];
         this.setWorld();
+        this.initEnemyBehavior();
         this.draw();
-        //this.initEnemyBehavior();
     }
 
     setWorld() {
@@ -68,8 +68,9 @@ class World {
         this.updateCharacterLogic();
         this.drawWorld();
         this.ctx.restore();
-        this.drawUI();
         this.collisionManager.checkCollisions();
+        this.removeCollectedObjects();
+        this.drawUI();
         requestAnimationFrame(() => this.draw());
     }
 
@@ -113,7 +114,11 @@ class World {
         if (!Array.isArray(objects)) return;
         objects.forEach(obj => {
             if (typeof obj.update === 'function') {
-                obj.update();
+                if (obj instanceof Jellyfish) {
+                    obj.update(this.character);
+                } else {
+                    obj.update();
+                }
             }
         });
     }
@@ -125,7 +130,7 @@ class World {
     drawUI() {
         this.addObjectToMap(this.healthbar);
         this.addObjectToMap(this.poisonbar);
-        //this.addObjectToMap(this.coinbar);
+        this.addObjectToMap(this.coinbar);
     }
 
     updateBubbles() {
@@ -210,6 +215,16 @@ class World {
         this.ctx.restore();
     }
 
-    //initEnemyBehavior() {}
+    initEnemyBehavior() {
+        this.enemies.forEach(enemy => {
+            if (typeof enemy.setTarget === 'function') {
+                enemy.setTarget(this.character);
+            }
+        });
+    }
 
+    removeCollectedObjects() {
+        this.coins = this.coins.filter(coin => !coin.collected);
+        this.bottles = this.bottles.filter(bottle => !bottle.collected);
+    }
 }

@@ -33,7 +33,10 @@
 
     <!-- Level + Collision -->
     <script src="./js/levels/level.class.js"></script>
+    <script src="./js/levels/level0.js"></script>
     <script src="./js/levels/level1.js"></script>
+    <script src="./js/levels/level2.js"></script>
+    <script src="./js/levels/level3.js"></script>
     <script src="js/classes/collision-manager.class.js"></script>
 
     <!-- Engine -->
@@ -53,7 +56,7 @@
                 <div class="content-wrapper">
                         <h1>Sharkie</h1>
                         <div class="menu-btn-wrapper">
-                            <button onclick="startGame(level1)">Start</button>
+                            <button onclick="startGame(level0)">Start</button>
                             <button onclick="openLevelSelect()">Select Level</button>
                             <button onclick="showControls()">Controls</button>
                             <button onclick="showCredits()">Credits</button>
@@ -96,41 +99,75 @@
                             </div>
                         </div>
                         <div id="fin-attack-controls" class="controls">
-                            <div id="wasd-b">
-                                <div id="b-button">
-                                    <div class="control-btn" id="b">B</div>
-                                </div>
-                            </div>
-                            <div id="fin-attack-controls-description" class="description">
-                                <p>
-                                    press B or F to use fin-slap
-                                </p>
-                            </div>
                             <div id="arrows-f">
                                 <div id="f-button">
                                     <div class="control-btn" id="f">F</div>
                                 </div>
                             </div>
-                        </div>
-                        <div id="bubble-attack-controls" class="controls">
+                            <div id="fin-attack-controls-description" class="description">
+                                <p>
+                                    press F or SPACE to use fin-slap
+                                </p>
+                            </div>
                             <div id="wasd-b-SPACE">
                                 <div id="space">
                                     <div class="control-btn" id="space">SPACE</div>
                                 </div>
                             </div>
-                            <div id="bubble-attack-controls-description" class="description">
-                                <p>
-                                    press SPACE or E to use fin-slap
-                                </p>
-                            </div>
+                        </div>
+                        <div id="bubble-attack-controls" class="controls">
                             <div id="arrows-f-e">
                                 <div id="e-button">
                                     <div class="control-btn" id="e">E</div>
                                 </div>
                             </div>
+                            <div id="bubble-attack-controls-description" class="description">
+                                <p>
+                                    press SPACE or E to use bubble-attack
+                                </p>
+                            </div>
+                            <div id="wasd-b">
+                                <div id="b-button">
+                                    <div class="control-btn" id="b">B</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="poison-bubble-attack-controls" class="controls">
+                            <div id="wasd-b-SPACE-q">
+                                <div id="q-button">
+                                    <div class="control-btn" id="q">Q</div>
+                                </div>
+                            </div>
+                            <div id="bubble-attack-controls-description" class="description">
+                                <p>
+                                    press Q or V to use poison-bubbles
+                                </p>
+                            </div>
+                            <div id="arrows-f-e-v">
+                                <div id="v-button">
+                                    <div class="control-btn" id="v">V</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pause-controls" class="controls">
+                            <div id="wasd-b-SPACE-q-ESC">
+                                <div id="ESC-button">
+                                    <div class="control-btn" id="ESC">ESC</div>
+                                </div>
+                            </div>
+                            <div id="bubble-attack-controls-description" class="description">
+                                <p>
+                                    press ESC or P to pause the Game
+                                </p>
+                            </div>
+                            <div id="arrows-f-e-v-p">
+                                <div id="p-button">
+                                    <div class="control-btn" id="p">P</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="btn-wrapper">
-                            <button onclick="backToStart()">Back</button>
+                            <button onclick="backToPreviousMenu()">Back</button>
                         </div>
                     </div>
                 </div>    
@@ -140,6 +177,7 @@
                 <div class="overlay-content">
                     <h2>Select Level</h2>
                     <div class="level-btn-screen">  
+                        <button onclick="startGame(level0)">Level 0</button>
                         <button onclick="startGame(level1)">Level 1</button>
                         <button onclick="startGame(level2)">Level 2</button>
                         <button onclick="startGame(level3)">Level 3</button>
@@ -157,17 +195,30 @@
                         <p>grafics, sound ... </p>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur numquam atque praesentium fugiat excepturi totam consequuntur corporis labore ut natus iste, rerum quae sequi? Necessitatibus eos quos delectus dolorum officia?</p>
                     </div>
-                    <button onclick="backToStart()">Back</button>
+                    <button onclick="backToPreviousMenu()">Back</button>
                 </div>    
             </div>
             <div id="pause-screen" class="overlay display-none">
                 <div class="content-wrapper">
                     <h2>Pause</h2>
-                    <div class="">
+                    <div class="pause-screen-btn">
                         <button onclick="resumeGame()">Continue Game</button>
+                        <button onclick="showSetting()">Setting</button>
                         <button onclick="showControls()">Controls</button>
                         <button onclick="restartLevel()">Restart Level</button>
-                        <button onclick="backToStart()">Back to Homescreen</button>
+                        <button onclick="backToStart()">Back to Start</button>
+                    </div>
+                </div>
+            </div>
+            <div id="settings-screen" class="overlay display-none">
+                <div class="content-wrapper">
+                    <h2>Settings</h2>
+                    <div class="settings-wrapper">
+                        <button onclick="muteGame()">Mute</button>
+                        <button onclick="showCoinCounter()">Show Coins as Counter</button>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button onclick="backToPreviousMenu()">Back</button>
                     </div>
                 </div>
             </div>

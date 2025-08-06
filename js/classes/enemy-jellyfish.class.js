@@ -205,7 +205,7 @@ class Jellyfish extends MovableObject {
             this.x += this.speedX;
             this.y += this.speedY;
         } else {
-            this.swim();
+            this.playSwimAnimation(sharkie);
             this.checkProximity(sharkie);
         }
     }
