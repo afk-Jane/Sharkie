@@ -30,7 +30,7 @@ class Coin extends CollectableObject {
 
     draw(ctx) {
         this.playAnimation();
-        super.draw(ctx);
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
     onCollision(player) {

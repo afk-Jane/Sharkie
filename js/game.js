@@ -1,7 +1,16 @@
 let canvas;
 let world;
-let keyboard = new Keyboard();
+const keyboard = new Keyboard();
 let menuStack = [];
+const settings = SettingsManager.getInstance();
+let backgroundMusic = new Audio('');
+backgroundMusic.loop = true;
+let pauseToggled = false;
+
+
+window.onload = () => {
+    showOverlay('start-screen');
+};
 
 /**
  * @param {Level} level 
@@ -10,6 +19,9 @@ function startGame(level) {
     hideAllOverlays();
     showCanvas();
     init(level);
+    if (!settings.get('mute')) {
+        backgroundMusic.play();
+    }
 }
 
 /**
@@ -72,6 +84,18 @@ function backToStart() {
     document.getElementById('start-screen').classList.remove('display-none');
 }
 
+function pauseGame() {
+    this.isPaused = true;
+    cancelAnimationFrame(this.animationFrame);
+    this.saveGameState();
+}
+
+function resumeGame() {
+    this.isPaused = false;
+    this.lastFrameTime = performance.now();
+    this.gameLoop();
+}
+
 function togglePause() {
     if (!world) return;
     if (world.paused) {
@@ -81,24 +105,45 @@ function togglePause() {
     }
 }
 
-function pauseGame() {
-    world.paused = true;
-    showOverlay('pause-screen');
+function saveGameState() {
+    if (!world || !world.character) return;
+    const state = {
+        character: {
+            x: world.character.x,
+            y: world.character.y,
+            energy: world.character.energy,
+            poisonActive: world.character.poisonActive
+        },
+        enemies: world.enemies.map(e => ({
+            x: e.x,
+            y: e.y,
+            type: e.type,
+            energy: e.energy
+        })),
+        mute: settings.get('mute'),
+        score: world.coinbar.coins
+    };
+    localStorage.setItem('gameState', JSON.stringify(state));
 }
 
-function resumeGame() {
-    world.paused = false;
-    hideAllOverlays();
-}
-
-window.onload = () => {
-    showOverlay('start-screen');
-};
-
-function showCoinCounter() {
+function toggleCoinCounter() {
+    const newState = settings.toggle('showCoinCounter');
     if (world && world.coinbar) {
-        world.coinbar.showCounter = !world.coinbar.showCounter;
+        world.coinbar.showCounter = newState;
     }
+}
+
+function toggleMute() {
+    const mute = settings.toggle('mute');
+    if (mute) {
+        backgroundMusic.pause();
+    } else {
+        backgroundMusic.play();
+    }
+}
+
+function restartLevel() {
+    location.reload();
 }
 
 function gameOver(win) {
@@ -200,5 +245,11 @@ window.addEventListener("keyup", (e) => {
         case "p":
             pauseToggled = false;
             break;
+    }
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        this.pauseGame();
     }
 });

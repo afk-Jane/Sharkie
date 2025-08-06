@@ -25,6 +25,7 @@ class World {
         this.barriers = level.barriers || [];
         this.enemies = level.enemies || [];
         this.coins = level.coins || [];
+        this.coinbar.totalCoins = this.coins.length;
         this.bottles = level.bottles || [];
         this.bottles = (level.bottles || []);
         this.bottles.forEach(bottle => {
@@ -64,12 +65,10 @@ class World {
         if (!this.paused) {
             this.updateCharacterLogic();
             this.collisionManager.checkCollisions();
+            this.removeCollectedObjects();
         }
-        this.updateCharacterLogic();
         this.drawWorld();
         this.ctx.restore();
-        this.collisionManager.checkCollisions();
-        this.removeCollectedObjects();
         this.drawUI();
         requestAnimationFrame(() => this.draw());
     }

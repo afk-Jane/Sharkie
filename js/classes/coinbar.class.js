@@ -10,7 +10,6 @@ class Coinbar extends Statusbar {
         './img/4Marcadores/statusbar/coins/80_coins.png',
         './img/4Marcadores/statusbar/coins/100_coins.png'
     ];
-    
 
     coins = 0;
 
@@ -21,16 +20,34 @@ class Coinbar extends Statusbar {
         this.width = 200;
         this.height = 60;
         this.loadImage(this.COIN_IMAGE);
-        this.loadImages(this.IMAGES)
+        this.loadImages(this.IMAGES);
+        this.setCoins(0);
     }
 
     setCoins(count) {
         this.coins = count;
+        let index = 0;
+        if (this.totalCoins) {
+            const percent = this.coins / this.totalCoins;
+            if (percent >= 1) index = 5;
+            else if (percent >= 0.8) index = 4;
+            else if (percent >= 0.6) index = 3;
+            else if (percent >= 0.4) index = 2;
+            else if (percent >= 0.2) index = 1;
+        } else {
+            if (this.coins >= 100) index = 5;
+            else if (this.coins >= 80) index = 4;
+            else if (this.coins >= 60) index = 3;
+            else if (this.coins >= 40) index = 2;
+            else if (this.coins >= 20) index = 1;
+        }
+        this.img = this.imageCache[this.IMAGES[index]];
     }
 
     draw(ctx) {
         if (this.showCounter) {
-            ctx.drawImage(this.img, this.x, this.y, 48, 48);
+            const coinImg = this.imageCache[this.COIN_IMAGE];
+            ctx.drawImage(coinImg, this.x, this.y, 48, 48);
             ctx.fillStyle = 'gold';
             ctx.font = 'bold 32px LuckiestGuy, Arial, sans-serif';
             ctx.textAlign = 'left';
@@ -39,4 +56,5 @@ class Coinbar extends Statusbar {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
+
 }

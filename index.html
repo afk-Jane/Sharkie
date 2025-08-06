@@ -42,6 +42,7 @@
     <!-- Engine -->
     <script src="js/classes/world.classes.js"></script>
     <script src="./js/animation.js"></script>
+    <script src="./js/classes/settings-manager.class.js"></script>
     <script src="./js/game.js"></script>
     <title>Sharkie</title>
     <link rel="icon" type="image/x-icon" href="/img/sharkie.png">
@@ -58,6 +59,7 @@
                         <div class="menu-btn-wrapper">
                             <button onclick="startGame(level0)">Start</button>
                             <button onclick="openLevelSelect()">Select Level</button>
+                            <button onclick="showSetting()">Settings</button>
                             <button onclick="showControls()">Controls</button>
                             <button onclick="showCredits()">Credits</button>
                         </div>    
@@ -194,6 +196,7 @@
                     <div class="text-wrapper">
                         <p>grafics, sound ... </p>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur numquam atque praesentium fugiat excepturi totam consequuntur corporis labore ut natus iste, rerum quae sequi? Necessitatibus eos quos delectus dolorum officia?</p>
+                        <p><a href="https://iconscout.com/icons/speaker" class="text-underline font-size-sm" target="_blank">Speaker</a> by <a href="https://iconscout.com/contributors/vincent-le-moign" class="text-underline font-size-sm" target="_blank">Vincent Le moign</a></p>
                     </div>
                     <button onclick="backToPreviousMenu()">Back</button>
                 </div>    
@@ -214,7 +217,7 @@
                 <div class="content-wrapper">
                     <h2>Settings</h2>
                     <div class="settings-wrapper">
-                        <button onclick="muteGame()">Mute</button>
+                        <button onclick="toggleMute()">Mute</button>
                         <button onclick="showCoinCounter()">Show Coins as Counter</button>
                     </div>
                     <div class="btn-wrapper">

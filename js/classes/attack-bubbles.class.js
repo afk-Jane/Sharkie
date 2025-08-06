@@ -5,7 +5,7 @@ class Bubble extends MovableObject {
         this.y = y - 28;
         this.width = 64;
         this.height = 64;
-        this.speed = 4;
+        this.speed = 8;
         this.poisoned = poisoned;
         this.toLeft = toLeft;
         this.type = 'projectile';
