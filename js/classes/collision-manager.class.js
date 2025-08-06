@@ -57,6 +57,7 @@ class CollisionManager {
     * Enemies are objects with type === 'enemy'.
      */
     checkCollisions() {
+        const barriers = this.objects.filter(obj => obj.type === 'barrier');
         const projectiles = this.objects.filter(obj => obj.type === 'projectile');
         const enemyProjectiles = this.objects.filter(obj => obj.type === 'enemyProjectile');
         const enemies = this.objects.filter(obj => obj.type === 'enemy');
@@ -99,6 +100,13 @@ class CollisionManager {
             for (const collectable of collectables) {
                 if (CollisionManager.isColliding(player, collectable) && !collectable.collected) {
                     collectable.onCollision?.(player);
+                }
+            }
+        }
+        for (const player of players) {
+            for (const barrier of barriers) {
+                if (CollisionManager.isColliding(player, barrier)) {
+                    player.onBarrierCollision?.(barrier);
                 }
             }
         }

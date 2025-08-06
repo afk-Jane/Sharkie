@@ -5,6 +5,7 @@ class Keyboard {
     DOWN = false;
     SPACE = false;
     B = false;
+    ESC = false;
 
     W = false;
     A = false;
@@ -12,6 +13,7 @@ class Keyboard {
     D = false;
     E = false;
     F = false;
+    p = false;
 
     get BUBBLE() {
         return this.SPACE || this.E;

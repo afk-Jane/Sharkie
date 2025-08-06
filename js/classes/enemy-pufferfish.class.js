@@ -91,6 +91,7 @@ class Pufferfish extends MovableObject {
     ];
     currentImage = 0;
     deadAnimationFinished = false;
+    type = 'enemy';
 
     constructor() {
         super();

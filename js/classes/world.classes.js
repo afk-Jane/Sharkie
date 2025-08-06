@@ -21,9 +21,17 @@ class World {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
+        const theme = level.backgroundTheme || 'night';
+        this.barriers = level.barriers || [];
         this.enemies = level.enemies || [];
         this.coins = level.coins || [];
         this.bottles = level.bottles || [];
+        this.bottles = (level.bottles || []);
+        this.bottles.forEach(bottle => {
+            if (typeof bottle.setTheme === 'function') {
+                bottle.setTheme(level.backgroundTheme || 'night');
+            }
+        });
         this.level_end_x = level.level_end_x || 1280 * 10;
         this.character = new Character();
         this.character.world = this;
@@ -35,6 +43,9 @@ class World {
         this.collisionManager = new CollisionManager();
         this.collisionManager.register(this.character);
         this.enemies.forEach(enemy => this.collisionManager.register(enemy));
+        this.coins.forEach(coin => this.collisionManager.register(coin));
+        this.bottles.forEach(bottle => this.collisionManager.register(bottle));
+        this.barriers.forEach(barrier => this.collisionManager.register(barrier));
         this.bubble = [];
         this.setWorld();
         this.draw();
@@ -85,11 +96,26 @@ class World {
 
     drawWorld() {
         this.layerManager.render(this.ctx);
+        this.updateObjects(this.barriers);
+        this.addObjectToMap(this.barriers);
+        this.updateObjects(this.coins);
+        this.updateObjects(this.bottles);
+        this.updateObjects(this.enemies);
         this.addObjectToMap(this.coins);
         this.addObjectToMap(this.bottles);
         this.addObjectToMap(this.enemies);
-        this.drawCharacter()
+        this.drawCharacter();
+        this.updateObjects(this.bubbles);
         this.addObjectToMap(this.bubbles);
+    }
+
+    updateObjects(objects) {
+        if (!Array.isArray(objects)) return;
+        objects.forEach(obj => {
+            if (typeof obj.update === 'function') {
+                obj.update();
+            }
+        });
     }
 
     drawCharacter() {
@@ -144,26 +170,35 @@ class World {
     }
 
     addToMap(movObj) {
-        if (!movObj || typeof movObj.isImageLoaded === 'function' && !movObj.isImageLoaded()) {
-            return;
-        }
-        if (movObj instanceof Sunbeam) {
-            movObj.draw(this.ctx);
-            return;
-        }
-        if (movObj.otherDirection) {
-            this.ctx.save();
-            this.ctx.translate(movObj.x + movObj.width, movObj.y);
-            this.ctx.scale(-1, 1);
-            this.ctx.drawImage(movObj.img, 0, 0, movObj.width, movObj.height);
-            this.ctx.restore();
-        } else {
-            this.ctx.drawImage(movObj.img, movObj.x, movObj.y, movObj.width, movObj.height);
-        }
-        if (movObj instanceof MovableObject && typeof movObj.drawFrame === 'function') {
-            movObj.drawFrame(this.ctx);
-        }
-    }
+        if (!movObj || (typeof movObj.isImageLoaded === 'function' && !movObj.isImageLoaded())) {
+                return;
+            }
+
+            if (movObj instanceof Sunbeam) {
+                movObj.draw(this.ctx);
+                return;
+            }
+
+            if (typeof movObj.draw === 'function' && !(movObj instanceof Character)) {
+                movObj.draw(this.ctx);
+                return;
+            }
+
+            if (movObj.otherDirection) {
+                this.ctx.save();
+                this.ctx.translate(movObj.x + movObj.width, movObj.y);
+                this.ctx.scale(-1, 1);
+                this.ctx.drawImage(movObj.img, 0, 0, movObj.width, movObj.height);
+                this.ctx.restore();
+            } else {
+                this.ctx.drawImage(movObj.img, movObj.x, movObj.y, movObj.width, movObj.height);
+            }
+
+            if (movObj instanceof MovableObject && typeof movObj.drawFrame === 'function') {
+                movObj.drawFrame(this.ctx);
+            }
+    }    
+    
 
     flipImage(movObj) {
         this.ctx.save();

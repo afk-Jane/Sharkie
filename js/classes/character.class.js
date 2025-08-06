@@ -109,6 +109,7 @@ class Character extends MovableObject {
   poisonCount = 0;
   poisonActive = false;
   currentAnimation = 'WAITING';
+  type = 'player';
 
   constructor() {
     super();
@@ -224,6 +225,13 @@ class Character extends MovableObject {
     this.playHurtAnimation();
     setTimeout(() => this.isHurt = false, 300);
     setTimeout(() => this.isInvincible = false, 2000);
+  }
+
+  onBarrierCollision(barrier) {
+    if (this.world.keyboard.RIGHT || this.world.keyboard.D) this.x -= this.speed;
+    if (this.world.keyboard.LEFT || this.world.keyboard.A) this.x += this.speed;
+    if (this.world.keyboard.UP || this.world.keyboard.W) this.y += this.speed;
+    if (this.world.keyboard.DOWN || this.world.keyboard.S) this.y -= this.speed;
   }
 
   spawnBubble(poisoned) {

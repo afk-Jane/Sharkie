@@ -67,7 +67,7 @@ class Boss_Orcinus extends MovableObject {
         this.energy = 100;
         this.height = 256;
         this.width = 320;
-        this.x = 1500;
+        this.x = 5900; //11600
         this.y = 100;
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();

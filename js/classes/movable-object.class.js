@@ -6,7 +6,6 @@ class MovableObject extends DrawableObject {
     energy = 100;
     lastHit = 0;
     imageCache = {};
-    
 
     moveRight() {
         this.x += this.speed;
@@ -31,7 +30,6 @@ class MovableObject extends DrawableObject {
 
     onCollision(other) {
         this.energy -= 10;
-
         console.log(`Collision! ${this.constructor.name} and ${other.constructor.name}`);
         console.log(`Energie: this=${this.energy}, other=${other.energy}`);
     }
