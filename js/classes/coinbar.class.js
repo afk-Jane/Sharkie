@@ -51,13 +51,21 @@ class Coinbar extends Statusbar {
     draw(ctx) {
         const coinImg = this.imageCache[this.COIN_IMAGE];
         if (this.showCounter) {
+            const coinOffsetX = 10;
+            const coinOffsetY = 18;
+            const textOffsetX = 38;
+            const textOffsetY = 24; 
             if (coinImg) {
-                ctx.drawImage(coinImg, this.x, this.y, 32, 32);
+                ctx.drawImage(coinImg, this.x + coinOffsetX, this.y + coinOffsetY, 28, 28);
             }
             ctx.fillStyle = 'gold';
-            ctx.font = 'bold 32px LuckiestGuy, Arial, sans-serif';
+            ctx.font = 'bold 24px LuckiestGuy, Arial, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(`x ${this.coins}`, this.x + 60, this.y + 36);
+            ctx.fillText(
+                `x ${this.coins}`,
+                this.x + coinOffsetX + textOffsetX,
+                this.y + coinOffsetY + textOffsetY
+            );
         } else {
             if (this.img) {
                 ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
