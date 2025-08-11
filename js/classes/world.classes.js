@@ -3,6 +3,7 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+    paused = false;
 
     character;
     enemies = [];
@@ -98,6 +99,7 @@ class World {
         this.layerManager.render(this.ctx);
         this.updateObjects(this.barriers);
         this.addObjectToMap(this.barriers);
+        this.barriers.forEach(barrier => barrier.drawHitboxes(this.ctx));
         this.updateObjects(this.coins);
         this.updateObjects(this.bottles);
         this.updateObjects(this.enemies);
@@ -225,5 +227,15 @@ class World {
     removeCollectedObjects() {
         this.coins = this.coins.filter(coin => !coin.collected);
         this.bottles = this.bottles.filter(bottle => !bottle.collected);
+    }
+
+    pauseGame() {
+        this.paused = true;
+        document.getElementById('pause-screen').classList.remove('display-none');
+    }
+
+    resumeGame() {
+        this.paused = false;
+        document.getElementById('pause-screen').classList.add('display-none');
     }
 }

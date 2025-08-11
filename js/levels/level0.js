@@ -2,9 +2,12 @@ const level0Config = {
     backgroundTheme: 'night',
 
     barriers: [
+        
         new Barrier(2, 640, 0),
-        new Barrier(3, 1696, 360),
+        new Barrier(3, 1696, 454),
         new Barrier(4, 3000, 300),
+        new Barrier(5, 4500, 0),
+        new Barrier(1, 6040, 0)
     ],
 
     enemies: [ 

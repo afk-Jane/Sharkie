@@ -19,7 +19,11 @@ class Coinbar extends Statusbar {
         this.y = 84;
         this.width = 200;
         this.height = 60;
-        this.loadImage(this.COIN_IMAGE);
+        this.coinImg = new Image();
+        this.coinImg.src = this.COIN_IMAGE;
+        this.coinImg.onload = () => {
+            this.imageCache[this.COIN_IMAGE] = this.coinImg;
+        };
         this.loadImages(this.IMAGES);
         this.setCoins(0);
     }
@@ -45,15 +49,19 @@ class Coinbar extends Statusbar {
     }
 
     draw(ctx) {
+        const coinImg = this.imageCache[this.COIN_IMAGE];
         if (this.showCounter) {
-            const coinImg = this.imageCache[this.COIN_IMAGE];
-            ctx.drawImage(coinImg, this.x, this.y, 48, 48);
+            if (coinImg) {
+                ctx.drawImage(coinImg, this.x, this.y, 32, 32);
+            }
             ctx.fillStyle = 'gold';
             ctx.font = 'bold 32px LuckiestGuy, Arial, sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText(`x ${this.coins}`, this.x + 60, this.y + 36);
         } else {
-            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            if (this.img) {
+                ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            }
         }
     }
 

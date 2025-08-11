@@ -105,7 +105,7 @@ class CollisionManager {
         }
         for (const player of players) {
             for (const barrier of barriers) {
-                if (CollisionManager.isColliding(player, barrier)) {
+                if (typeof barrier.isColliding === 'function' && barrier.isColliding(player)) {
                     player.onBarrierCollision?.(barrier);
                 }
             }

@@ -19,9 +19,11 @@ function startGame(level) {
     hideAllOverlays();
     showCanvas();
     init(level);
+    /*
     if (!settings.get('mute')) {
         backgroundMusic.play();
     }
+        */
 }
 
 /**
@@ -84,18 +86,6 @@ function backToStart() {
     document.getElementById('start-screen').classList.remove('display-none');
 }
 
-function pauseGame() {
-    this.isPaused = true;
-    cancelAnimationFrame(this.animationFrame);
-    this.saveGameState();
-}
-
-function resumeGame() {
-    this.isPaused = false;
-    this.lastFrameTime = performance.now();
-    this.gameLoop();
-}
-
 function togglePause() {
     if (!world) return;
     if (world.paused) {
@@ -141,9 +131,19 @@ function toggleMute() {
         backgroundMusic.play();
     }
 }
-
 function restartLevel() {
-    location.reload();
+    if (!world || !world.canvas) return;
+    let currentLevelConfig = world.levelConfig || level0Config;
+    world = new World(world.canvas, new Level(currentLevelConfig), keyboard);
+    loadCharacterAnimation(world.character);
+    world.coinbar.showCounter = settings.get('showCoinCounter');
+}
+
+function startGame(level) {
+    hideAllOverlays();
+    showCanvas();
+    init(level);
+    world.coinbar.showCounter = settings.get('showCoinCounter');
 }
 
 function gameOver(win) {
@@ -154,6 +154,17 @@ function gameOver(win) {
     }
     document.getElementById('canvas').style.display = 'none';
 }
+
+function togglePause() {
+    if (!world) return;
+    if (world.paused) {
+        world.resumeGame();
+    } else {
+        world.pauseGame();
+    }
+}
+
+
 
 window.addEventListener("keydown", (e) => {
     switch (e.key.toLowerCase()) {
