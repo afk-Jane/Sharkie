@@ -1,7 +1,9 @@
+type = 'projectile';
+
 class Bubble extends MovableObject {
     constructor(x, y, toLeft = false, poisoned = false) {
         super();
-        this.x = x;
+        this.x = x + 32;
         this.y = y - 28;
         this.width = 64;
         this.height = 64;
@@ -32,7 +34,7 @@ class Bubble extends MovableObject {
     onCollision(enemy) {
         this.markForRemoval = true;
         if (typeof enemy.takeDamage === 'function') {
-            enemy.takeDamage();
+            enemy.takeDamage('bubble', this.x, this);
         }
     }
 }

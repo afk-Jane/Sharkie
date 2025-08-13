@@ -37,7 +37,13 @@ const level0Config = {
         
     ],
 
-    level_end_x: 1280 * 10
+    level_end_x: 1280 * 10,
+
+    tutorialHints: [
+        { text: 'Use arrow keys to move Sharkie', posX: 50, posY: 100 },
+        { text: 'Collect coins to earn points', posX: 200, posY: 400 },
+        { text: 'Avoid enemies or lose health', posX: 400, posY: 700 }
+    ]
 };
 
 const level0 = new Level(level0Config);

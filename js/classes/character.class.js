@@ -282,9 +282,22 @@ class Character extends MovableObject {
   }
 
   attackFin() {
-    this.loadImages(this.IMAGES_ATTACK_FIN);
-    this.playAttackAnimation(this.IMAGES_ATTACK_FIN);
-    // Hier Hitbox der Gegner prüfen
+      this.loadImages(this.IMAGES_ATTACK_FIN);
+      this.playAttackAnimation(this.IMAGES_ATTACK_FIN);
+      let finHitbox = {
+          x: this.otherDirection ? this.x - 40 : this.x + this.width,
+          y: this.y + this.height / 2 - 20,
+          width: 40,
+          height: 40,
+          type: 'melee'
+      };
+      if (this.world && this.world.enemies) {
+          this.world.enemies.forEach(enemy => {
+              if (enemy.isCollidingWith(finHitbox)) {
+                  enemy.onCollision(finHitbox);
+              }
+          });
+      }
   }
 
   playAttackAnimation(images, onComplete = () => {}) {

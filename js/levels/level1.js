@@ -1,20 +1,22 @@
 const level1Config = {
     backgroundTheme: 'night',
     barriers: [
+        /*
         new Barrier(1, 800, 400),
         new Barrier(2, 1200, 500),
         new Barrier(3, 1600, 300)
+        */
     ],
     enemies: [ 
-        new Pufferfish(),
-        new Jellyfish(),
-        new Jellyfish(),
-        new Pufferfish(),
-        new Pufferfish(),
-        new Pufferfish(),
-        new Jellyfish(),
-        new Jellyfish(),
-        new Boss_Orcinus()
+        new Pufferfish(400, 200),
+        new Jellyfish(600, 300, false),
+        new Jellyfish(680, 280, false),
+        new Pufferfish(700, 250),
+        new Pufferfish(840, 250),
+        new Pufferfish(900, 300),
+        new Jellyfish(1024, 360, false),
+        new Jellyfish(1280, 440, true),
+        new Boss_Orcinus(21000, 200)
     ],
     coins: [
         new Coin(400, 300),

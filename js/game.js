@@ -6,6 +6,8 @@ const settings = SettingsManager.getInstance();
 let backgroundMusic = new Audio('');
 backgroundMusic.loop = true;
 let pauseToggled = false;
+let menuIndex = 0;
+let currentMenuIndex = 0;
 
 
 window.onload = () => {
@@ -164,7 +166,71 @@ function togglePause() {
     }
 }
 
+function getVisibleMenuButtons() {
+    const overlay = document.querySelector('.overlay:not(.display-none)');
+    return overlay ? Array.from(overlay.querySelectorAll('.menu-btn')) : [];
+}
 
+function highlightMenuButton(index) {
+    const buttons = getVisibleMenuButtons();
+    buttons.forEach((btn, i) => btn.classList.toggle('selected', i === index));
+    if (buttons[index]) buttons[index].focus();
+}
+
+function handleMenuNavigation(e) {
+    const buttons = getVisibleMenuButtons();
+    if (!buttons.length) return;
+
+    if (['w', 'arrowup'].includes(e.key.toLowerCase())) {
+        menuIndex = (menuIndex - 1 + buttons.length) % buttons.length;
+        highlightMenuButton(menuIndex);
+        e.preventDefault();
+    }
+    if (['s', 'arrowdown'].includes(e.key.toLowerCase())) {
+        menuIndex = (menuIndex + 1) % buttons.length;
+        highlightMenuButton(menuIndex);
+        e.preventDefault();
+    }
+    if ([' ', 'enter'].includes(e.key.toLowerCase())) {
+        buttons[menuIndex].click();
+        e.preventDefault();
+    }
+}
+/*
+function resetMenuNavigation() {
+    menuIndex = 0;
+    highlightMenuButton(menuIndex);
+}
+
+
+const origShowOverlay = showOverlay;
+window.showOverlay = function(id) {
+    origShowOverlay(id);
+    setTimeout(resetMenuNavigation, 10);
+};
+
+function isMenuOpen() {
+    return document.querySelector('.overlay:not(.display-none)') !== null;
+}
+
+window.addEventListener('keydown', (e) => {
+    if (isMenuOpen()) {
+        handleMenuNavigation(e);
+        if (['escape', 'p'].includes(e.key.toLowerCase())) {
+            backToPreviousMenu();
+            e.preventDefault();
+        }
+    } else {
+        handleGameKeysDown(e);
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (!isMenuOpen()) {
+        handleGameKeysUp(e);
+    }
+});
+*/
 
 window.addEventListener("keydown", (e) => {
     switch (e.key.toLowerCase()) {

@@ -99,7 +99,13 @@ class Jellyfish extends MovableObject {
         this.currentState = 'SWIMMING';
 
         const cfg = this.colorConfig[this.baseColor];
-        this.loadImage(cfg.swim[0]);
+        const firstSwimImg = cfg.swim[0];
+        this.loadImage(firstSwimImg);
+        const imgObj = new Image();
+        imgObj.src = firstSwimImg;
+        imgObj.onload = () => {
+            this.img = imgObj;
+        };
         this.loadImages(cfg.swim);
         this.loadImages(cfg.dead);
         this.loadImages(cfg.deadWithoutBubbles);
@@ -140,6 +146,11 @@ class Jellyfish extends MovableObject {
             if (!this.deadAnimationFinished) this.playDeathAnimation(images);
             return;
         }
+        if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
+            images = this.colorConfig[this.currentColor].deadWithoutBubbles;
+            if (!this.deadAnimationFinished) this.playDeathAnimation(images);
+            return;
+        }
         if (this.currentState === 'DANGEROUS') {
             images = this.colorConfig[this.dangerousColor].swim;
         } else {
@@ -150,12 +161,14 @@ class Jellyfish extends MovableObject {
 
     checkProximity(sharkie) {
         const distance = Math.abs(this.x - sharkie.x);
-        if (distance < 256 && this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
-            this.currentState = 'DANGEROUS';
-            this.currentColor = colorConfig[this.baseColorKey].dangerous;
-        } else if (distance >= 256 && this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
-            this.currentState = 'SWIMMING';
-            this.currentColor = colorConfig[this.baseColorKey].base;
+        if (this.isElectric) {
+            if (distance < 256 && this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
+                this.currentState = 'DANGEROUS';
+                this.currentColor = this.dangerousColor;
+            } else if (distance >= 256 && this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
+                this.currentState = 'SWIMMING';
+                this.currentColor = this.baseColor;
+            }
         }
     }
 
@@ -180,39 +193,61 @@ class Jellyfish extends MovableObject {
         }, 200); 
     }
 
-    onCollision(source) {
-        if (source.type === 'player' || source.type === 'melee' || source.type === 'projectile') {
-            this.takeDamage();
-        }
+    becomeDangerous() {
+        this.isDangerous = true;
+        this.currentColor = this.dangerousColor;
+        this.isElectric = true;
     }
 
-    takeDamage(type, sharkieX) {
-        this.energy -= 20;
-        if (this.energy <= 0) {
-            this.currentState = (type === 'bubble') ? 'DEAD' : 'DEAD_WITHOUT_BUBBLES';
-            this.deadAnimationFinished = false;
-            if (type === 'fin') {
-                this.speedX = (this.x < sharkieX) ? -8 : 8;
-                this.speedY = -3;
+    becomeCalm() {
+        this.isDangerous = false;
+        this.currentColor = this.baseColor;
+        this.isElectric = false;
+    }
+
+    onCollision(source) {
+        if (source.type === 'melee' || source.type === 'projectile') {
+            this.takeDamage(source.type, source.x);
+        }
+        if (source.type === 'player') {
+            if (this.isElectric) {
+                source.onCollision(this);
+            } else {
+                if (source.x < this.x) {
+                    source.x -= 64;
+                } else {
+                    source.x += 64;
+                }
             }
         }
     }
 
-    update(sharkie) {
-        if (this.currentState === 'DEAD') {
-            this.y -= 1;
-        } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
-            this.x += this.speedX;
-            this.y += this.speedY;
-        } else {
-            this.playSwimAnimation(sharkie);
-            this.checkProximity(sharkie);
+    takeDamage(type = 'bubble', sharkieX = 0) {
+        this.energy -= 20;
+        if (this.energy <= 0) {
+            if (type === 'melee') {
+                this.currentState = 'DEAD_WITHOUT_BUBBLES';
+                this.deadAnimationFinished = false;
+                this.speedX = (this.x < sharkieX) ? -8 : 8; 
+                this.speedY = -3;
+            } else {
+                this.currentState = 'DEAD';
+                this.deadAnimationFinished = false;
+                this.speedX = 0;
+                this.speedY = -1; 
+            }
+            this.currentImage = 0;
         }
     }
 
-    becomeDangerous() {
-        this.isDangerous = true;
-        this.currentColor = this.dangerousColor;
-        
+    update(sharkie) {
+        this.checkProximity(sharkie);
+        this.playAnimation();
+        if (this.currentState === 'DEAD') {
+            this.y += this.speedY;
+        } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
     }
 }

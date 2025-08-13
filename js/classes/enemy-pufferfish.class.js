@@ -129,15 +129,6 @@ class Pufferfish extends MovableObject {
         }
     }
 
-   takeDamage() {
-        this.energy -= 20;
-        if (this.energy <= 0 && this.currentState !== 'DEAD') {
-            this.currentState = 'DEAD';
-            this.currentImage = 0;
-            this.deadAnimationFinished = false;
-        }
-    }
-
     playAnimation() {
         let images;
         switch (this.currentState) {
@@ -162,6 +153,11 @@ class Pufferfish extends MovableObject {
                 this.playDeathAnimation(this.DEAD_IMAGES_ALL_SKINS[this.skinIndex]);
             }
             break;
+        case 'DEAD_WITHOUT_BUBBLES':
+            if (!this.deadAnimationFinished) {
+                this.playDeathAnimation(this.DEAD_IMAGES_ALL_SKINS[this.skinIndex]);
+            }
+            break;
         default:
             this.playSwimAnimation(this.SWIM_IMAGES_ALL_SKINS[this.skinIndex]);
         }
@@ -176,11 +172,39 @@ class Pufferfish extends MovableObject {
         }
     }
 
-    initEnemyBehavior() {
-        this.enemies.forEach(enemy => {
-            if (typeof enemy.setTarget === 'function') {
-                enemy.setTarget(this.character);
+    takeDamage(type = 'bubble', sharkieX = 0, bubble = null) {
+        this.energy -= 20;
+        if (this.energy <= 0 && this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
+            if (type === 'melee') {
+                this.currentState = 'DEAD_WITHOUT_BUBBLES';
+                this.deadAnimationFinished = false;
+                this.speedX = (this.x < sharkieX) ? -8 : 8;
+                this.speedY = -3;
+            } else {
+                this.currentState = 'DEAD';
+                this.deadAnimationFinished = false;
+                this.speedX = 0;
+                this.speedY = -1;
+                if (bubble) {
+                    bubble.speedY = this.speedY;
+                    bubble.x = this.x;
+                    bubble.y = this.y;
+                }
             }
-        });
+            this.currentImage = 0;
+        }
     }
+
+    update() {
+        this.playAnimation();
+        if (this.currentState === 'DEAD') {
+            this.y += this.speedY;
+        } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
+    }
+
+
+
 }

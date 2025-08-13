@@ -5,6 +5,7 @@ class World {
     camera_x = 0;
     paused = false;
 
+
     character;
     enemies = [];
     collisions = [];

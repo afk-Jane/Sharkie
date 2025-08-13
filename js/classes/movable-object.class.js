@@ -39,7 +39,10 @@ class MovableObject extends DrawableObject {
         if (now - this.lastFrameTime > this.frameInterval) {
             this.lastFrameTime = now;
             this.currentImage = (this.currentImage + 1) % images.length;
-            this.img = this.imageCache[images[this.currentImage]];
+        }
+        const imgPath = images[this.currentImage % images.length];
+        if (this.imageCache[imgPath]) {
+            this.img = this.imageCache[imgPath];
         }
     }
 
