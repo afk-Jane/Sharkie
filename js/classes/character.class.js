@@ -241,8 +241,12 @@ class Character extends MovableObject {
       this.otherDirection,
       poisoned
     );
+    bubble.owner = this;
     if (this.world && this.world.bubbles) {
       this.world.bubbles.push(bubble);
+    }
+    if (this.world && this.world.collisionManager) {
+      this.world.collisionManager.register(bubble); 
     }
   }
 

@@ -49,7 +49,7 @@ class World {
         this.coins.forEach(coin => this.collisionManager.register(coin));
         this.bottles.forEach(bottle => this.collisionManager.register(bottle));
         this.barriers.forEach(barrier => this.collisionManager.register(barrier));
-        this.bubble = [];
+        this.bubbles = [];
         this.setWorld();
         this.initEnemyBehavior();
         this.draw();
@@ -116,13 +116,19 @@ class World {
         if (!Array.isArray(objects)) return;
         objects.forEach(obj => {
             if (typeof obj.update === 'function') {
-                if (obj instanceof Jellyfish) {
+                if (obj instanceof Jellyfish || obj instanceof Pufferfish) {
                     obj.update(this.character);
                 } else {
                     obj.update();
                 }
             }
         });
+        for (let i = objects.length - 1; i >= 0; i--) {
+            if (objects[i].markForRemoval) {
+                if (this.collisionManager) this.collisionManager.unregister(objects[i]);
+                objects.splice(i, 1);
+            }
+        }
     }
 
     drawCharacter() {
@@ -138,6 +144,15 @@ class World {
     updateBubbles() {
         this.bubbles.forEach(b => b.move());
         this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.level_end_x);
+        const survivors = [];
+        for (const b of this.bubbles) {
+            if (b.markForRemoval && !b.followDead) {
+                if (this.collisionManager) this.collisionManager.unregister(b);
+            } else {
+                survivors.push(b);
+            }
+        }
+        this.bubbles = survivors;
     }
 
     createFinAttackHitbox() {
@@ -150,7 +165,12 @@ class World {
             type: 'melee',
             onCollision: (enemy) => {
                 if (typeof enemy.takeDamage === 'function') {
-                    enemy.takeDamage();
+                    enemy.takeDamage('melee', this.character.x, null);
+                    if (enemy.energy > 0) {
+                        const dir = (enemy.x < this.character.x) ? -1 : 1;
+                        enemy.x += dir * 20;
+                        if (typeof enemy.applyKnockback === 'function') enemy.applyKnockback(dir);
+                    }
                 }
             }
         };
@@ -217,12 +237,14 @@ class World {
         this.ctx.restore();
     }
 
-    initEnemyBehavior() {
-        this.enemies.forEach(enemy => {
-            if (typeof enemy.setTarget === 'function') {
-                enemy.setTarget(this.character);
+    initEnemyBehavior(world) {
+        setInterval(() => {
+            this.enemies.forEach(e => {
+            if (e && typeof e.checkProximity === 'function') {
+                e.checkProximity(this.character);
             }
-        });
+            });
+        }, 200);
     }
 
     removeCollectedObjects() {

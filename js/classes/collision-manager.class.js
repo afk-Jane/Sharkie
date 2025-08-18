@@ -67,8 +67,13 @@ class CollisionManager {
         for (const player of players) {
             for (const enemy of enemies) {
                 if (CollisionManager.isColliding(player, enemy)) {
-                    player.onCollision?.(enemy);
-                    enemy.onCollision?.(player);
+                    const dangerous = typeof enemy.isDangerousToPlayer === 'function'
+                        ? enemy.isDangerousToPlayer()
+                        : true;
+                    if (dangerous) {
+                        player.onCollision?.(enemy);
+                        enemy.onCollision?.(player);
+                    }
                 }
             }
         }
@@ -81,10 +86,16 @@ class CollisionManager {
             }
         }
         for (const projectile of projectiles) {
+            let hit = false;
             for (const enemy of enemies) {
-                if (CollisionManager.isColliding(projectile, enemy)) {
+                if (!hit && CollisionManager.isColliding(projectile, enemy)) {
                     projectile.onCollision?.(enemy);
                     enemy.onCollision?.(projectile);
+                    hit = true;
+                }
+            }
+            for (const player of players) {
+                if (projectile.owner === player && CollisionManager.isColliding(projectile, player)) {
                 }
             }
         }

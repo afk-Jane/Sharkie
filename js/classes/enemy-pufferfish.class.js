@@ -89,9 +89,13 @@ class Pufferfish extends MovableObject {
         './img/2Enemy/1Pufferfish/4DIE/3Dead3.png'
         ]
     ];
+
     currentImage = 0;
     deadAnimationFinished = false;
     type = 'enemy';
+    attackSpeed = 1.5;
+    attackSpeedY = 1.2;
+    maxVerticalStep = 2.2;
 
     constructor() {
         super();
@@ -110,6 +114,8 @@ class Pufferfish extends MovableObject {
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
         this.type = 'enemy';
+        this.speedX = 0;
+        this.attackSpeed = 1.5;
         setInterval(() => {
             this.playAnimation();
         }, 1000 / 15);
@@ -117,15 +123,37 @@ class Pufferfish extends MovableObject {
 
     onCollision(source) {
         if (this.currentState === 'DEAD') return;
-        const isPlayer = source.type === 'player';
         const isAttack = source.type === 'projectile' || source.type === 'melee';
-        if (isPlayer && this.currentState === 'SWIMMING') {
+        if (isAttack && (this.currentState === 'SWIMMING' || this.currentState === 'ATTACKING' || this.currentState === 'TRANSITION')) {
+            this.takeDamage(source.type, source.x, source);
+        }
+        if (source.type === 'player' && (this.currentState === 'TRANSITION' || this.currentState === 'ATTACKING')) {
+            source.onCollision(this);
+        }
+    }
+ 
+    checkProximity(sharkie) {
+        if (!sharkie || typeof sharkie.x !== 'number') return;
+        const distance = Math.abs(this.x - sharkie.x);
+        if (distance < 256 && this.currentState === 'SWIMMING') {
             this.currentState = 'TRANSITION';
             this.currentImage = 0;
-            return;
+        } else if (distance > 512 && this.currentState === 'ATTACKING') {
+            this.currentState = 'TRANSITION_BACKWARD';
+            this.currentImage = this.TRANSITION_IMAGES_ALL_SKINS[this.skinIndex].length - 1;
         }
-        if (isAttack && (this.currentState === 'SWIMMING' || this.currentState === 'ATTACKING')) {
-            this.takeDamage();
+        if (this.currentState === 'ATTACKING') {
+            this.speedX = sharkie.x < this.x ? -this.attackSpeed : this.attackSpeed;
+            this.otherDirection = sharkie.x > this.x;
+            const dy = sharkie.y - this.y;
+            let vy = Math.sign(dy) * this.attackSpeedY;
+            if (Math.abs(vy) > this.maxVerticalStep) {
+                vy = Math.sign(vy) * this.maxVerticalStep;
+            }
+            this.speedY = vy;
+        } else {
+            this.speedX = 0;
+            this.speedY = 0;
         }
     }
 
@@ -145,6 +173,17 @@ class Pufferfish extends MovableObject {
                 this.currentState = 'ATTACKING';
             }
             break;
+        case 'TRANSITION_BACKWARD': {
+            const frames = this.TRANSITION_IMAGES_ALL_SKINS[this.skinIndex];
+            if (this.currentImage >= 0) {
+                this.img = this.imageCache[frames[this.currentImage]];
+                this.currentImage--;
+            } else {
+                this.currentImage = 0;
+                this.currentState = 'SWIMMING';
+            }
+            break;
+        }    
         case 'ATTACKING':
             this.playSwimAnimation(this.ATTACK_IMAGES_ALL_SKINS[this.skinIndex]);
             break;
@@ -168,7 +207,7 @@ class Pufferfish extends MovableObject {
             this.img = this.imageCache[images[this.currentImage]];
             this.currentImage++;
         } else {
-            this.deadAnimationFinished = true;
+            this.currentImage = 0;
         }
     }
 
@@ -178,30 +217,69 @@ class Pufferfish extends MovableObject {
             if (type === 'melee') {
                 this.currentState = 'DEAD_WITHOUT_BUBBLES';
                 this.deadAnimationFinished = false;
-                this.speedX = (this.x < sharkieX) ? -8 : 8;
-                this.speedY = -3;
-            } else {
+                this.speedX = (this.x < sharkieX) ? -10 : 10;
+                this.speedY = -4;
+                this.currentImage = 0;
+            } else if (type === 'bubble' || type === 'projectile') {
                 this.currentState = 'DEAD';
                 this.deadAnimationFinished = false;
                 this.speedX = 0;
                 this.speedY = -1;
+                this.currentImage = 0;
                 if (bubble) {
-                    bubble.speedY = this.speedY;
+                    bubble.markForRemoval = false;
                     bubble.x = this.x;
                     bubble.y = this.y;
+                    bubble.speedY = this.speedY;
+                    bubble.speedX = this.speedX;
+                    bubble.followDead = true;
+                    this.bubbleRef = bubble;
                 }
             }
-            this.currentImage = 0;
         }
     }
 
-    update() {
+    startDeathAnimation(interval) {
+        clearInterval(this.deathAnimationInterval);
+        this.deathAnimationInterval = setInterval(() => this.playAnimation(), interval);
+    }
+
+    update(sharkie) {
+        this.checkProximity(sharkie);
         this.playAnimation();
+        this.x += this.speedX;
+        this.y += this.speedY;
         if (this.currentState === 'DEAD') {
             this.y += this.speedY;
+            if (this.bubbleRef && this.bubbleRef.followDead) {
+                this.bubbleRef.x = this.x;
+                this.bubbleRef.y = this.y;
+                if (this.y + this.height < -10) {
+                    this.bubbleRef.followDead = false;
+                    this.bubbleRef.markForRemoval = true;
+                    this.bubbleRef = null;
+                }
+            }
+            if (this.y + this.height < -10) {
+                this.markForRemoval = true;
+            }
         } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
             this.x += this.speedX;
             this.y += this.speedY;
+            if (this.y + this.height < -10 || this.x + this.width < -10 || this.x > 1280 + 10) {
+                this.markForRemoval = true;
+            }
+        }
+    }
+
+    isDangerousToPlayer() {
+        return this.currentState === 'TRANSITION' || this.currentState === 'ATTACKING';
+    }
+
+    applyKnockback(dir = 1) {
+        if (this.currentState !== 'DEAD' && this.currentState !== 'DEAD_WITHOUT_BUBBLES') {
+            this.x += dir * 14;
+            this.y -= 4;
         }
     }
 
