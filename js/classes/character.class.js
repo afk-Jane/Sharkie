@@ -321,7 +321,7 @@ class Character extends MovableObject {
         this.isAttacking = false;
         onComplete();
       }
-    }, 50);
+    }, 30);
   }
 
   updateAttack() {

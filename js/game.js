@@ -3,11 +3,10 @@ let world;
 const keyboard = new Keyboard();
 let menuStack = [];
 const settings = SettingsManager.getInstance();
-let backgroundMusic = new Audio('');
-backgroundMusic.loop = true;
 let pauseToggled = false;
 let menuIndex = 0;
 let currentMenuIndex = 0;
+const bgMusic = new SoundManager("../audio/relaxing-guitar-loop-v5-245859.mp3");
 
 
 window.onload = () => {
@@ -34,6 +33,9 @@ function startGame(level) {
 function init(level) {
     canvas = document.getElementById('canvas');
     console.log(level);
+    if (!settings.get('mute')) {
+        bgMusic.play();
+    }
     world = new World(canvas, level, keyboard);
     loadCharacterAnimation(world.character);
 }
@@ -81,6 +83,11 @@ function showCredits() {
 
 function showSetting() {
     showOverlay('settings-screen');
+    if (settings.get("mute")) {
+        document.getElementById("muteValue").textContent = "muted";
+    } else {
+        document.getElementById("muteValue").textContent = "unmuted";
+    }
 }
 
 function backToStart() {
@@ -128,15 +135,20 @@ function toggleCoinCounter() {
 function toggleMute() {
     const mute = settings.toggle('mute');
     if (mute) {
-        backgroundMusic.pause();
+        bgMusic.mute();
+        document.getElementById("muteValue").textContent = "muted";
     } else {
-        backgroundMusic.play();
+        bgMusic.unmute();
+        document.getElementById("muteValue").textContent = "unmuted";
     }
+    settings.save();
 }
+
 function restartLevel() {
     if (!world || !world.canvas) return;
-    let currentLevelConfig = world.levelConfig || level0Config;
-    world = new World(world.canvas, new Level(currentLevelConfig), keyboard);
+    let config = world.levelConfig;
+    let newLevel = new Level(config);
+    world = new World(world.canvas, newLevel, keyboard);
     loadCharacterAnimation(world.character);
     world.coinbar.showCounter = settings.get('showCoinCounter');
 }

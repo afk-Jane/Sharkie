@@ -18,4 +18,4 @@ const level2Config = {
     level_end_x: 720 * 12
 };
 
-const level2 = new Level(level2Config);
+window.level2 = new Level(level2Config);

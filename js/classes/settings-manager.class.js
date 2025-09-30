@@ -7,6 +7,7 @@ class SettingsManager {
         }
         this.settings = {
             mute: false,
+            volume: 1.0,
             showCoinCounter: false
         };
         this.load();

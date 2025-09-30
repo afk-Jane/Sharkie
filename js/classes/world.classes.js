@@ -23,6 +23,7 @@ class World {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
+        this.levelConfig = level.config || level;
         const theme = level.backgroundTheme || 'night';
         this.barriers = level.barriers || [];
         this.enemies = level.enemies || [];
@@ -63,6 +64,9 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateCamera();
         this.ctx.save();
+        if (this.cameraZoom && this.cameraZoom !== 1) {
+            this.ctx.scale(this.cameraZoom, this.cameraZoom);
+        }
         this.ctx.translate(-this.camera_x, 0);
         if (!this.paused) {
             this.updateCharacterLogic();
@@ -80,6 +84,9 @@ class World {
     }
 
     updateCamera() {
+        if (this.introActive) {
+            return;
+        }
         const center = this.canvas.width / 2;
         if (this.character.x > center) {
             this.camera_x = this.character.x - center;
@@ -88,7 +95,27 @@ class World {
         }
     }
 
+    /*
+    zoomToBoss(boss) {
+        this.camera_x = boss.x - this.canvas.width / 2 + boss.width / 2;
+        //this.ctx.scale(1.5, 1.5); //zoom
+        this.cameraZoom = 1.5;
+    }
+    */
+   focusIntro(boss) {
+        const canvasCenterOffset = Math.round(this.canvas.width / 2);
+        this.camera_x = Math.max(0, Math.round(boss.x - canvasCenterOffset + (boss.width / 2)));
+        const maxCamera = Math.max(0, this.level_end_x - this.canvas.width);
+        if (this.camera_x > maxCamera) this.camera_x = maxCamera;
+    }
+
+    resetCamera() {
+        this.cameraZoom = 1;
+        this.updateCamera();
+    }
+
     updateCharacterLogic() {
+        if (this.introActive) return;
         this.character.updateCharacter();
         if (this.keyboard.FIN && !this.finCooldown) {
             this.createFinAttackHitbox();
@@ -115,13 +142,15 @@ class World {
     updateObjects(objects) {
         if (!Array.isArray(objects)) return;
         objects.forEach(obj => {
-            if (typeof obj.update === 'function') {
-                if (obj instanceof Jellyfish || obj instanceof Pufferfish) {
-                    obj.update(this.character);
-                } else {
-                    obj.update();
-                }
+                    if (typeof obj.update === 'function') {
+            if (obj instanceof Jellyfish || obj instanceof Pufferfish) {
+                obj.update(this.character);
+            } else if (obj instanceof Boss_Orcinus) {
+                obj.update(this.character, this);
+            } else {
+                obj.update();
             }
+        }
         });
         for (let i = objects.length - 1; i >= 0; i--) {
             if (objects[i].markForRemoval) {

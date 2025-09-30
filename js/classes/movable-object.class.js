@@ -6,6 +6,7 @@ class MovableObject extends DrawableObject {
     energy = 100;
     lastHit = 0;
     imageCache = {};
+    collidable = true;
 
     moveRight() {
         this.x += this.speed;
@@ -20,6 +21,8 @@ class MovableObject extends DrawableObject {
     }
 
     isCollidingWith(other) {
+        if (!this.collidable || !other || other.collidable === false) return false;
+
         return (
             this.x < other.x + other.width &&
             this.x + this.width > other.x &&

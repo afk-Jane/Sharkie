@@ -34,4 +34,4 @@ const level1Config = {
     level_end_x: 1280 * 10
 };
 
-const level1 = new Level(level1Config);
+window.level1 = new Level(level1Config);

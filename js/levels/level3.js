@@ -32,4 +32,4 @@ const level3Config = {
     level_end_x: 1280 * 10
 };
 
-const level3 = new Level(level3Config);
+window.level3 = new Level(level3Config);

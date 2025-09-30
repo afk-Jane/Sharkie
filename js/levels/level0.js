@@ -6,8 +6,8 @@ const level0Config = {
         new Barrier(2, 640, 0),
         new Barrier(3, 1696, 454),
         new Barrier(4, 3000, 300),
-        new Barrier(5, 4500, 0),
-        new Barrier(1, 6040, 0)
+        //new Barrier(5, 4500, 0),
+        //new Barrier(1, 6040, 0)
     ],
 
     enemies: [ 
@@ -15,11 +15,12 @@ const level0Config = {
        new Jellyfish(),
         new Jellyfish(),
         new Pufferfish(),
-        new Pufferfish(),a
+        new Pufferfish(),
         new Pufferfish(),
         new Jellyfish(),
         new Jellyfish(),
         */
+       new Boss_Orcinus()
     ],
 
     coins: [
@@ -34,7 +35,8 @@ const level0Config = {
         new PoisonBottle(880, 572, 'left'),
         new PoisonBottle(1024, 580, 'right'),
         new PoisonBottle(1280, 624, 'left'),
-        
+        new PoisonBottle(2750, 570, 'right'),
+        new PoisonBottle(4032, 512, 'left'),
     ],
 
     level_end_x: 1280 * 10,
@@ -46,4 +48,4 @@ const level0Config = {
     ]
 };
 
-const level0 = new Level(level0Config);
+window.level0 = new Level(level0Config);
