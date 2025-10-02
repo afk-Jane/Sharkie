@@ -101,14 +101,14 @@ class World {
         //this.ctx.scale(1.5, 1.5); //zoom
         this.cameraZoom = 1.5;
     }
-    */
+    
    focusIntro(boss) {
         const canvasCenterOffset = Math.round(this.canvas.width / 2);
         this.camera_x = Math.max(0, Math.round(boss.x - canvasCenterOffset + (boss.width / 2)));
         const maxCamera = Math.max(0, this.level_end_x - this.canvas.width);
         if (this.camera_x > maxCamera) this.camera_x = maxCamera;
     }
-
+ */
     resetCamera() {
         this.cameraZoom = 1;
         this.updateCamera();

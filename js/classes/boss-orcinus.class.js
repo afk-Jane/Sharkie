@@ -69,29 +69,33 @@ class Boss_Orcinus extends MovableObject {
         this.width = 320;
         this.x = 5900; //11600
         this.y = 100;
+        this.visible = false;
+        this.introScale = 2.0; 
         this.frameInterval = 100;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
         this.type = 'enemy';
-        setInterval(() => {
-            this.playAnimation();
-        }, 1000 / 15);
     }
 
     draw(ctx) {
+        if (!this.visible && this.currentState !== 'INTRODUCE') return;
         if (this.currentState === 'INTRODUCE') {
             const img = this.imageCache[this.ORCINUS_IMAGES_INTRODUCE[this.currentImage]];
             if (img) {
-                const targetW = this.width;
-                const targetH = this.height;
+                const targetW = this.width * this.introScale;
+                const targetH = this.height * this.introScale;
                 const ratio = Math.min(targetW / img.width, targetH / img.height);
                 const drawW = Math.round(img.width * ratio);
                 const drawH = Math.round(img.height * ratio);
-                const drawX = this.x + (this.width - drawW) / 2;
-                const drawY = this.y + (this.height - drawH) / 2;
+                const drawX = ctx.canvas.width - drawW - 20;
+                const drawY = 20;
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                ctx.restore();
             }
         } else {
+            if (!this.visible) return;
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
@@ -149,24 +153,33 @@ class Boss_Orcinus extends MovableObject {
             this.currentState = 'INTRODUCE';
             this.currentImage = 0;
             this.introStarted = true;
+            this.x += 200;
+            this.y = 0;
             if (world) {
                 world.introActive = true;
-                if (typeof world.focusIntro === 'function') {
-                    world.focusIntro(this);
-                }
             }
         }
         if (this.currentState === 'INTRODUCE' && this.introAnimationFinished()) {
             this.currentState = 'SWIMMING';
             this.currentImage = 0;
+                const worldX = world.camera_x + (ctx.canvas.width - this.width - 40); 
+    const worldY = world.camera_y + 50; // Offset anpassen
+
+    this.x = worldX;
+    this.y = worldY;
             if (world) world.introActive = false;
             if (world && typeof world.resetCamera === 'function') {
                 world.resetCamera();
             }
         }
         if (this.currentState === 'ATTACKING') {
-            // Hier Boss-Angriffslogik einbauen (z.B. auf Sharkie zubewegen)
-            // Beispiel: this.x -= 2; // oder gezielte Bewegungen
+            // Hier Boss-Angriffslogik
+        }
+        if (this.currentState === 'HURT') {
+            
+        }
+        if (this.currentState === 'DEAD') {
+            // Hier win blabla
         }
         this.playAnimation();
     }
