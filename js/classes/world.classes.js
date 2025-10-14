@@ -64,10 +64,9 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateCamera();
         this.ctx.save();
-        if (this.cameraZoom && this.cameraZoom !== 1) {
-            this.ctx.scale(this.cameraZoom, this.cameraZoom);
-        }
-        this.ctx.translate(-this.camera_x, 0);
+        const zoom = this.cameraZoom || 1;
+        this.ctx.scale(zoom, zoom);
+        this.ctx.translate(-this.camera_x / zoom, 0);
         if (!this.paused) {
             this.updateCharacterLogic();
             this.collisionManager.checkCollisions();
@@ -75,7 +74,11 @@ class World {
         }
         this.drawWorld();
         this.ctx.restore();
+        this.ctx.save();
+        this.drawCharacter();
         this.drawUI();
+        this.ctx.restore();
+
         requestAnimationFrame(() => this.draw());
     }
 
@@ -93,23 +96,32 @@ class World {
         } else {
             this.camera_x = 0;
         }
+        this.cameraZoom = 1;
     }
 
-    /*
-    zoomToBoss(boss) {
-        this.camera_x = boss.x - this.canvas.width / 2 + boss.width / 2;
-        //this.ctx.scale(1.5, 1.5); //zoom
-        this.cameraZoom = 1.5;
+    zoomToBoss(boss, sharkie) {
+        this.introActive = true;
+            const centerX = (sharkie.x + boss.x) / 2;
+            this.camera_x = centerX - this.canvas.width / 2;
+            this.cameraZoom = 1.5;
+            setTimeout(() => {
+                this.introActive = false;
+                this.resetCamera();
+            }, 3000);
     }
-    
+
    focusIntro(boss) {
-        const canvasCenterOffset = Math.round(this.canvas.width / 2);
-        this.camera_x = Math.max(0, Math.round(boss.x - canvasCenterOffset + (boss.width / 2)));
-        const maxCamera = Math.max(0, this.level_end_x - this.canvas.width);
-        if (this.camera_x > maxCamera) this.camera_x = maxCamera;
+        this.introActive = true;
+        const centerX = (sharkie.x + boss.x) / 2; 
+        this.cameraX = centerX - this.canvas.width / 2;
+        setTimeout(() => {
+            this.introActive = false;
+            this.cameraX = sharkie.x - this.canvas.width / 2;
+        }, boss.introDuration);
     }
- */
+
     resetCamera() {
+        this.introActive = false;
         this.cameraZoom = 1;
         this.updateCamera();
     }

@@ -68,10 +68,10 @@ class Boss_Orcinus extends MovableObject {
         this.height = 256;
         this.width = 320;
         this.x = 5900; //11600
-        this.y = 100;
+        this.y = 320;
         this.visible = false;
         this.introScale = 2.0; 
-        this.frameInterval = 100;
+        this.frameInterval = 250;
         this.lastFrameTime = Date.now();
         this.currentState = 'SWIMMING';
         this.type = 'enemy';
@@ -87,8 +87,8 @@ class Boss_Orcinus extends MovableObject {
                 const ratio = Math.min(targetW / img.width, targetH / img.height);
                 const drawW = Math.round(img.width * ratio);
                 const drawH = Math.round(img.height * ratio);
-                const drawX = ctx.canvas.width - drawW - 20;
-                const drawY = 20;
+                const drawX = ctx.canvas.width - drawW;
+                const drawY = 0;
                 ctx.save();
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.drawImage(img, drawX, drawY, drawW, drawH);
@@ -149,24 +149,39 @@ class Boss_Orcinus extends MovableObject {
 
     update(sharkie, world) {
         const distance = Math.abs(this.x - sharkie.x);
-        if (this.currentState === 'SWIMMING' && distance < 530 && !this.introStarted) {
+        if (this.currentState === 'SWIMMING' && distance < 512 && !this.introStarted) {
             this.currentState = 'INTRODUCE';
             this.currentImage = 0;
             this.introStarted = true;
-            this.x += 200;
-            this.y = 0;
-            if (world) {
-                world.introActive = true;
+            if (world && typeof world.zoomToBoss === 'function') {
+                world.zoomToBoss(this, sharkie);
             }
         }
         if (this.currentState === 'INTRODUCE' && this.introAnimationFinished()) {
             this.currentState = 'SWIMMING';
             this.currentImage = 0;
-                const worldX = world.camera_x + (ctx.canvas.width - this.width - 40); 
-    const worldY = world.camera_y + 50; // Offset anpassen
-
-    this.x = worldX;
-    this.y = worldY;
+            this.visible = true;
+            if (world && typeof world.zoomToBoss === 'function') {
+                world.zoomToBoss(this, sharkie);
+            }
+            if (world && world.ctx && world.canvas) {
+                const ctx = world.ctx;
+                const lastIntroImgPath = this.ORCINUS_IMAGES_INTRODUCE[this.ORCINUS_IMAGES_INTRODUCE.length - 1];
+                const img = this.imageCache[lastIntroImgPath];
+                if (img) {
+                    const targetW = this.width * this.introScale;
+                    const targetH = this.height * this.introScale;
+                    const ratio = Math.min(targetW / img.width, targetH / img.height);
+                    const drawW = Math.round(img.width * ratio);
+                    const drawH = Math.round(img.height * ratio);
+                    const drawX = ctx.canvas.width - drawW;
+                    const drawY = 0;
+                    const screenX = drawX;
+                    const screenY = drawY + drawH;
+                    this.x = screenX + world.camera_x;
+                    this.y = screenY - this.height;
+                }
+            }
             if (world) world.introActive = false;
             if (world && typeof world.resetCamera === 'function') {
                 world.resetCamera();
