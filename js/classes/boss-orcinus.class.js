@@ -149,7 +149,7 @@ class Boss_Orcinus extends MovableObject {
 
     update(sharkie, world) {
         const distance = Math.abs(this.x - sharkie.x);
-        if (this.currentState === 'SWIMMING' && distance < 512 && !this.introStarted) {
+        if (this.currentState === 'SWIMMING' && distance < 576 && !this.introStarted) {
             this.currentState = 'INTRODUCE';
             this.currentImage = 0;
             this.introStarted = true;

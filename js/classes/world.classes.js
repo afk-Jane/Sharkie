@@ -3,6 +3,9 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+    camera_x = 0;
+    cameraTargetX = 0;
+    cameraSmoothSpeed = 0.05;
     paused = false;
 
 
@@ -75,7 +78,7 @@ class World {
         this.drawWorld();
         this.ctx.restore();
         this.ctx.save();
-        this.drawCharacter();
+        //this.drawCharacter();
         this.drawUI();
         this.ctx.restore();
 
@@ -103,21 +106,10 @@ class World {
         this.introActive = true;
             const centerX = (sharkie.x + boss.x) / 2;
             this.camera_x = centerX - this.canvas.width / 2;
-            this.cameraZoom = 1.5;
             setTimeout(() => {
-                this.introActive = false;
-                this.resetCamera();
+                    this.introActive = false;
+                    this.resetCamera();
             }, 3000);
-    }
-
-   focusIntro(boss) {
-        this.introActive = true;
-        const centerX = (sharkie.x + boss.x) / 2; 
-        this.cameraX = centerX - this.canvas.width / 2;
-        setTimeout(() => {
-            this.introActive = false;
-            this.cameraX = sharkie.x - this.canvas.width / 2;
-        }, boss.introDuration);
     }
 
     resetCamera() {
