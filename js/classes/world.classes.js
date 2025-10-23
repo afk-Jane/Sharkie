@@ -64,6 +64,7 @@ class World {
     }
 
     draw() {
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateCamera();
         this.ctx.save();
@@ -81,7 +82,6 @@ class World {
         //this.drawCharacter();
         this.drawUI();
         this.ctx.restore();
-
         requestAnimationFrame(() => this.draw());
     }
 
@@ -90,33 +90,38 @@ class World {
     }
 
     updateCamera() {
-        if (this.introActive) {
-            return;
-        }
         const center = this.canvas.width / 2;
-        if (this.character.x > center) {
-            this.camera_x = this.character.x - center;
+        if (this.introActive) {
+            const desiredX = this.cameraTargetX - center;
+            this.camera_x += (desiredX - this.camera_x) * this.cameraSmoothSpeed;
         } else {
-            this.camera_x = 0;
+            if (this.character.x > center) {
+                this.camera_x += ((this.character.x - center) - this.camera_x) * this.cameraSmoothSpeed;
+            } else {
+                this.camera_x += (0 - this.camera_x) * this.cameraSmoothSpeed;
+            }
         }
         this.cameraZoom = 1;
     }
 
     zoomToBoss(boss, sharkie) {
         this.introActive = true;
-            const centerX = (sharkie.x + boss.x) / 2;
-            this.camera_x = centerX - this.canvas.width / 2;
+        const centerX = (sharkie.x + boss.x) / 2;
+        this.cameraTargetX = centerX;
+        setTimeout(() => {
+            this.cameraTargetX = sharkie.x;
             setTimeout(() => {
-                    this.introActive = false;
-                    this.resetCamera();
-            }, 3000);
+                this.introActive = false;
+            }, 1000);
+        }, 3000);
     }
 
-    resetCamera() {
+   /* resetCamera() {
         this.introActive = false;
         this.cameraZoom = 1;
         this.updateCamera();
     }
+        */
 
     updateCharacterLogic() {
         if (this.introActive) return;

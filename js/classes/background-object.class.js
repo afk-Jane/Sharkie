@@ -12,7 +12,7 @@ class BackgroundObject extends MovableObject {
     draw(ctx) {
         ctx.drawImage(
             this.img,
-            this.x,
+            Math.floor(this.x),
             this.y,
             this.width, 
             ctx.canvas.height

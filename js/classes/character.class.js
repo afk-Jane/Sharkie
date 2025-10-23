@@ -9,7 +9,7 @@ class Character extends MovableObject {
     "./img/1Sharkie/3Swim/6.png",
   ];
 
-  IMAGES_WAITING = [
+  IMAGES_IDLE = [
     "./img/1Sharkie/1IDLE/1.png",
     "./img/1Sharkie/1IDLE/2.png",
     "./img/1Sharkie/1IDLE/3.png",
@@ -30,7 +30,7 @@ class Character extends MovableObject {
     "./img/1Sharkie/1IDLE/18.png",
   ];
 
-  IMAGES_SLEEPING = [
+  IMAGES_LONG_IDLE = [
     "./img/1Sharkie/2Long_IDLE/I1.png",
     "./img/1Sharkie/2Long_IDLE/I2.png",
     "./img/1Sharkie/2Long_IDLE/I3.png",
@@ -108,7 +108,7 @@ class Character extends MovableObject {
   isAttacking = false;
   poisonCount = 0;
   poisonActive = false;
-  currentAnimation = 'WAITING';
+  currentAnimation = 'IDLE';
   type = 'player';
 
   constructor() {
@@ -116,9 +116,9 @@ class Character extends MovableObject {
     this.lastFrameTime = 0;
     this.frameInterval = 150;
     this.loadImage("./img/1Sharkie/3Swim/1.png");
-    this.loadImages(this.IMAGES_WAITING);
+    this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_SWIMMING);
-    this.loadImages(this.IMAGES_SLEEPING);
+    this.loadImages(this.IMAGES_LONG_IDLE);
     this.loadImages(this.IMAGES_ATTACK_BUBBLES);
     this.loadImages(this.IMAGES_ATTACK_BUBBLES_POISONED); 
     this.loadImages(this.IMAGES_ATTACK_FIN); 
@@ -143,30 +143,50 @@ class Character extends MovableObject {
   playAnimation() {
     if (this.isAttacking) return;
     let images;
-    if (this.isHurt) {
-      images = this.IMAGES_HURT;
-    } else {
-      switch (this.currentState) {
-        case 'SWIMMING':
-          images = this.IMAGES_SWIMMING;
+    if (this.currentState !== this.lastState) {
+      if (this.isHurt) {
+        images = this.IMAGES_HURT;
+      } else {
+        switch (this.currentState) {
+          case 'SWIMMING':
+            images = this.IMAGES_SWIMMING;
+            break;
+          case 'IDLE':
+            images = this.IMAGES_IDLE;
+            break;
+          case 'LONG_IDLE':
+            images = this.IMAGES_LONG_IDLE;
           break;
-        case 'WAITING':
-          images = this.IMAGES_WAITING;
-          break;
-        case 'ATTACK_BUBBLES':
-          images = this.IMAGES_ATTACK_BUBBLES;
-          break;
-        case 'ATTACK_BUBBLES_POISONED':
-          images = this.IMAGES_ATTACK_BUBBLES_POISONED;
-          break;
-        case 'ATTACK_FIN':
-          images = this.IMAGES_ATTACK_FIN;
-          break;
-        default:
-          images = this.IMAGES_WAITING;
+          case 'ATTACK_BUBBLES':
+            images = this.IMAGES_ATTACK_BUBBLES;
+            break;
+          case 'ATTACK_BUBBLES_POISONED':
+            images = this.IMAGES_ATTACK_BUBBLES_POISONED;
+            break;
+          case 'ATTACK_FIN':
+            images = this.IMAGES_ATTACK_FIN;
+            break;
+          default:
+            images = this.IMAGES_IDLE;
+        }
       }
+      this.playSwimAnimation(images);
+      this.lastState = this.currentState;
     }
-    this.playSwimAnimation(images);
+  }
+
+  playSwimAnimation(images) {
+    const now = Date.now();
+    if (!this.lastFrameTime) this.lastFrameTime = now;
+    if (now - this.lastFrameTime > this.frameInterval) {
+      this.lastFrameTime = now;
+      this.currentImage++;
+      if (this.currentImage >= images.length) this.currentImage = 0;
+    }
+    const imgPath = images[this.currentImage % images.length];
+    if (this.imageCache[imgPath]) {
+      this.img = this.imageCache[imgPath];
+    }
   }
 
   updateCharacter() {
@@ -195,11 +215,42 @@ class Character extends MovableObject {
     } else if (this.world.keyboard.DOWN || this.world.keyboard.S) {
       this.y += this.speed;
       this.currentState = 'SWIMMING';
+    } else if (this.isLongIdle()) {
+      this.currentState = 'LONG_IDLE';
     } else {
-      this.currentState = 'WAITING';
+      this.currentState = 'IDLE';
     }
     this.playAnimation();
     this.stayInBounds();
+  }
+  
+  isLongIdle() {
+    const now = Date.now();
+    if (!this.lastIdleTime) this.lastIdleTime = now;
+    const canIdle =
+      !this.isHurt &&
+      !this.isAttacking &&
+      !this.world.keyboard.LEFT &&
+      !this.world.keyboard.RIGHT &&
+      !this.world.keyboard.UP &&
+      !this.world.keyboard.DOWN &&
+      !this.world.keyboard.A &&
+      !this.world.keyboard.D &&
+      !this.world.keyboard.W &&
+      !this.world.keyboard.S &&
+      !this.world.keyboard.F &&
+      !this.world.keyboard.E;
+    if (canIdle) {
+      if (this.currentState !== 'IDLE') {
+        this.idleStartTime = now;
+        return false;
+      }
+      if (!this.idleStartTime) this.idleStartTime = now;
+      if (now - this.idleStartTime > 10000) return true;
+    } else {
+      this.idleStartTime = null;
+    }
+    return false;
   }
 
   stayInBounds() {
