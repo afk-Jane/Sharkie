@@ -1,5 +1,5 @@
 class MovableObject extends DrawableObject {
-    speed = 0.15;
+    speed = 150;
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
@@ -7,13 +7,14 @@ class MovableObject extends DrawableObject {
     lastHit = 0;
     imageCache = {};
     collidable = true;
+    frameTimer = 0;
 
-    moveRight() {
-        this.x += this.speed;
+    moveRight(deltaTime) {
+        this.x += this.speed * deltaTime;
     }
 
-    moveLeft() {
-        this.x -= this.speed;
+    moveLeft(deltaTime) {
+        this.x -= this.speed * deltaTime;
     }
 
     jump() {
@@ -22,7 +23,6 @@ class MovableObject extends DrawableObject {
 
     isCollidingWith(other) {
         if (!this.collidable || !other || other.collidable === false) return false;
-
         return (
             this.x < other.x + other.width &&
             this.x + this.width > other.x &&
@@ -34,34 +34,45 @@ class MovableObject extends DrawableObject {
     onCollision(other) {
         this.energy -= 10;
         console.log(`Collision! ${this.constructor.name} and ${other.constructor.name}`);
-        console.log(`Energie: this=${this.energy}, other=${other.energy}`);
+        console.log(`Energy: this=${this.energy}, other=${other.energy}`);
     }
 
-    playSwimAnimation(images) {
-        let now = new Date().getTime();
-        if (now - this.lastFrameTime > this.frameInterval) {
-            this.lastFrameTime = now;
+    playSwimAnimation(images, deltaTime) {
+        this.frameTimer += deltaTime;
+        const frameIntervalSec = this.frameInterval / 1000;
+        if (this.frameTimer > frameIntervalSec) {
+            this.frameTimer = 0;
             this.currentImage = (this.currentImage + 1) % images.length;
         }
-        const imgPath = images[this.currentImage % images.length];
+        const imgPath = images[this.currentImage];
         if (this.imageCache[imgPath]) {
             this.img = this.imageCache[imgPath];
         }
     }
 
-    playAnimation() {
-        let index = this.currentImage % images.length;
-        let path = images[index];
-        this.img = this.imageCache[path];
-        this.currentImage++;
+    playAnimation(images, deltaTime) {
+        this.frameTimer += deltaTime;
+        const frameIntervalSec = this.frameInterval / 1000;
+        if (this.frameTimer > frameIntervalSec) {
+            this.frameTimer = 0;
+            this.currentImage++;
+            const index = this.currentImage % images.length;
+            const path = images[index];
+            this.img = this.imageCache[path];
+        }
     }
 
     draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Jellyfish || this instanceof Pufferfish || this instanceof Boss_Orcinus) {
+        if (
+            this instanceof Character ||
+            this instanceof Jellyfish ||
+            this instanceof Pufferfish ||
+            this instanceof Boss_Orcinus
+        ) {
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = 'blue';
@@ -69,6 +80,4 @@ class MovableObject extends DrawableObject {
             ctx.stroke();
         }
     }
-
-
 }

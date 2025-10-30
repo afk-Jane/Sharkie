@@ -7,6 +7,9 @@ class World {
     cameraTargetX = 0;
     cameraSmoothSpeed = 0.05;
     paused = false;
+    lastFrameTime = 0;
+    enemyCheckTimer = 0;
+    enemyCheckInterval = 0.2;
 
 
     character;
@@ -63,26 +66,34 @@ class World {
         this.character.world = this;
     }
 
-    draw() {
-        this.ctx.imageSmoothingEnabled = false;
+    draw(timestamp) {
+       if (!timestamp) timestamp = performance.now();
+        if (!this.lastFrameTime) this.lastFrameTime = timestamp;
+        const deltaTime = (timestamp - this.lastFrameTime) / 1000;
+        this.lastFrameTime = timestamp;
+        this.enemyCheckTimer += deltaTime;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateCamera();
-        this.ctx.save();
-        const zoom = this.cameraZoom || 1;
-        this.ctx.scale(zoom, zoom);
-        this.ctx.translate(-this.camera_x / zoom, 0);
         if (!this.paused) {
-            this.updateCharacterLogic();
+            this.updateCharacterLogic(deltaTime);
+            this.runIntervalJobs();
             this.collisionManager.checkCollisions();
             this.removeCollectedObjects();
         }
-        this.drawWorld();
-        this.ctx.restore();
-        this.ctx.save();
-        //this.drawCharacter();
+        this.drawWorld(deltaTime);
         this.drawUI();
-        this.ctx.restore();
-        requestAnimationFrame(() => this.draw());
+        requestAnimationFrame((t) => this.draw(t));
+    }
+
+    runIntervalJobs() {
+        if (this.enemyCheckTimer >= this.enemyCheckInterval) {
+            this.enemyCheckTimer = 0;
+            this.enemies.forEach(e => {
+                if (e && typeof e.checkProximity === 'function') {
+                    try { e.checkProximity(this.character); } catch (err) {}
+                }
+            });
+        }
     }
 
     clearCanvas() {
@@ -125,11 +136,11 @@ class World {
 
     updateCharacterLogic() {
         if (this.introActive) return;
-        this.character.updateCharacter();
+        try { this.character.updateCharacter(deltaTime); } catch (err) {}
         if (this.keyboard.FIN && !this.finCooldown) {
             this.createFinAttackHitbox();
         }
-        this.updateBubbles();
+        this.updateBubbles(deltaTime);
     }
 
     drawWorld() {
@@ -148,21 +159,25 @@ class World {
         this.addObjectToMap(this.bubbles);
     }
 
-    updateObjects(objects) {
+    updateObjects(objects, deltaTime = 0) {
         if (!Array.isArray(objects)) return;
         objects.forEach(obj => {
-                    if (typeof obj.update === 'function') {
-            if (obj instanceof Jellyfish || obj instanceof Pufferfish) {
-                obj.update(this.character);
-            } else if (obj instanceof Boss_Orcinus) {
-                obj.update(this.character, this);
-            } else {
-                obj.update();
+            if (typeof obj.update === 'function') {
+                try {
+                    if (obj instanceof Jellyfish || obj instanceof Pufferfish) {
+                        obj.update(this.character, deltaTime);
+                    } else if (obj instanceof Boss_Orcinus) {
+                        obj.update(this.character, this, deltaTime);
+                    } else {
+                        obj.update(deltaTime);
+                    }
+                } catch (err) {
+                    try { obj.update(); } catch (err2) {}
+                }
             }
-        }
         });
         for (let i = objects.length - 1; i >= 0; i--) {
-            if (objects[i].markForRemoval) {
+            if (objects[i] && objects[i].markForRemoval) {
                 if (this.collisionManager) this.collisionManager.unregister(objects[i]);
                 objects.splice(i, 1);
             }
