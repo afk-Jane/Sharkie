@@ -27,9 +27,10 @@ class Bubble extends MovableObject {
         this.loadImage(bubbleImg);
     }
 
-    move() {
+    move(deltaTime) {
+        const movement = this.speed * (deltaTime / 1000);
         if (!this.followDead) {
-            this.x += this.toLeft ? -this.speed : this.speed;
+            this.x += this.toLeft ? -movement : movement;
         }
         if (!this.followDead) {
             const t = performance.now() - this.spawnTime;

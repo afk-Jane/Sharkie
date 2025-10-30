@@ -131,12 +131,12 @@ class Character extends MovableObject {
   }
 
   moveLeft() {
-    this.x -= this.speed;
+    this.x -= this.speed * deltaTime;
     this.otherDirection = true;
   }
 
   moveRight() {
-    this.x += this.speed;
+    this.x += this.speed * deltaTime;
     this.otherDirection = false;
   }
 
@@ -189,7 +189,7 @@ class Character extends MovableObject {
     }
   }
 
-  updateCharacter() {
+  updateCharacter(deltaTime) {
     if (this.isHurt) {
       this.currentState = 'HURT';
     } else if (this.world.keyboard.E) {
@@ -201,26 +201,26 @@ class Character extends MovableObject {
         this.currentState = 'ATTACK_BUBBLES';
       }
     } else if (this.world.keyboard.F) {
-      this.attackFin();
+      this.attackFin(deltaTime);
       this.currentState = 'ATTACK_FIN';
     } else if (this.world.keyboard.RIGHT || this.world.keyboard.D) {
-      this.moveRight();
+      this.moveRight(deltaTime);
       this.currentState = 'SWIMMING';
     } else if (this.world.keyboard.LEFT || this.world.keyboard.A) {
       this.moveLeft();
       this.currentState = 'SWIMMING';
     } else if (this.world.keyboard.UP || this.world.keyboard.W) {
-      this.y -= this.speed;
+      this.y -= this.speed * deltaTime;
       this.currentState = 'SWIMMING';
     } else if (this.world.keyboard.DOWN || this.world.keyboard.S) {
-      this.y += this.speed;
+      this.y += this.speed * deltaTime;
       this.currentState = 'SWIMMING';
     } else if (this.isLongIdle()) {
       this.currentState = 'LONG_IDLE';
     } else {
       this.currentState = 'IDLE';
     }
-    this.playAnimation();
+    this.playAnimation(deltaTime);
     this.stayInBounds();
   }
   

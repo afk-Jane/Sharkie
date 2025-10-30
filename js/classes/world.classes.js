@@ -144,7 +144,7 @@ class World {
     }
 
     drawWorld() {
-        this.layerManager.render(this.ctx);
+        this.layerManager.render(this.ctx, deltaTime);
         this.updateObjects(this.barriers);
         this.addObjectToMap(this.barriers);
         this.barriers.forEach(barrier => barrier.drawHitboxes(this.ctx));
@@ -195,7 +195,7 @@ class World {
     }
 
     updateBubbles() {
-        this.bubbles.forEach(b => b.move());
+        this.bubbles.forEach(b => b.move(deltaTime));
         this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.level_end_x);
         const survivors = [];
         for (const b of this.bubbles) {

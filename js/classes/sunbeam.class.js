@@ -10,8 +10,8 @@ class Sunbeam extends MovableObject {
         this.speed = config.speed;
     }
 
-    move() {
-        this.x -= this.speed;
+    move(deltaTime) {
+        this.x -= this.speed * deltaTime * 60;
         if (this.x + this.width < 0) {
             this.x = this.x + this.resetOffset;
         }

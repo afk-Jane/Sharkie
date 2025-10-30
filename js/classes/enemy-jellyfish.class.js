@@ -257,13 +257,13 @@ class Jellyfish extends MovableObject {
     update(sharkie) {
         this.checkProximity(sharkie);
         if (this.currentState === 'DEAD') {
-            this.y += this.speedY;
+            this.y += this.speedY * deltaTime;
             if (this.y + this.height < -10) {
                 this.markForRemoval = true;
             }
         } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
-            this.x += this.speedX;
-            this.y += this.speedY;
+            this.x += this.speedX * deltaTime;
+            this.y += this.speedY * deltaTime;
             if (this.y + this.height < -10 || this.x + this.width < -10 || this.x > 1280 + 10) {
                 this.markForRemoval = true;
             }

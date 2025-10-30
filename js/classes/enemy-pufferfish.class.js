@@ -247,10 +247,10 @@ class Pufferfish extends MovableObject {
     update(sharkie) {
         this.checkProximity(sharkie);
         this.playAnimation();
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.x += this.speedX * deltaTime;
+        this.y += this.speedY * deltaTime;
         if (this.currentState === 'DEAD') {
-            this.y += this.speedY;
+            this.y += this.speedY * deltaTime;
             if (this.bubbleRef && this.bubbleRef.followDead) {
                 this.bubbleRef.x = this.x;
                 this.bubbleRef.y = this.y;
@@ -264,8 +264,8 @@ class Pufferfish extends MovableObject {
                 this.markForRemoval = true;
             }
         } else if (this.currentState === 'DEAD_WITHOUT_BUBBLES') {
-            this.x += this.speedX;
-            this.y += this.speedY;
+            this.x += this.speedX * deltaTime;
+            this.y += this.speedY * deltaTime;
             if (this.y + this.height < -10 || this.x + this.width < -10 || this.x > 1280 + 10) {
                 this.markForRemoval = true;
             }
