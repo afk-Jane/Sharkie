@@ -134,7 +134,7 @@ class World {
     }
         */
 
-    updateCharacterLogic() {
+    updateCharacterLogic(deltaTime) {
         if (this.introActive) return;
         try { this.character.updateCharacter(deltaTime); } catch (err) {}
         if (this.keyboard.FIN && !this.finCooldown) {
@@ -143,7 +143,7 @@ class World {
         this.updateBubbles(deltaTime);
     }
 
-    drawWorld() {
+    drawWorld(deltaTime) {
         this.layerManager.render(this.ctx, deltaTime);
         this.updateObjects(this.barriers);
         this.addObjectToMap(this.barriers);
@@ -159,7 +159,7 @@ class World {
         this.addObjectToMap(this.bubbles);
     }
 
-    updateObjects(objects, deltaTime = 0) {
+    updateObjects(objects, deltaTime) {
         if (!Array.isArray(objects)) return;
         objects.forEach(obj => {
             if (typeof obj.update === 'function') {
@@ -194,7 +194,7 @@ class World {
         this.addObjectToMap(this.coinbar);
     }
 
-    updateBubbles() {
+    updateBubbles(deltaTime) {
         this.bubbles.forEach(b => b.move(deltaTime));
         this.bubbles = this.bubbles.filter(b => b.x + b.width > 0 && b.x < this.level_end_x);
         const survivors = [];

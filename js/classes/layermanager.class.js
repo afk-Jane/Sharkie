@@ -48,7 +48,7 @@ class LayerManager {
         }
     }
 
-    render(ctx) {
+    render(ctx, deltaTime = 0) {
         this.backgroundLayers.forEach(layer => layer.draw(ctx));
         this.sunbeams.forEach(sb => {
             sb.move(deltaTime);
